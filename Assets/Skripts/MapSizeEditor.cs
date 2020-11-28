@@ -21,17 +21,17 @@ public class MapSizeEditor : MonoBehaviour
 
     public void ValueInputWidth(float value)
     {
-        sizeX = (int)(value * 1000);
+        sizeX = (int)(value) * 1000;
         sizeWidth.text = "" + (int)(value);
     }
     public void ValueInputLongth(float value)
     {
-        sizeY = (int)(value * 1000);
+        sizeY = (int)(value) * 1000;
         sizeLongth.text = "" + (int)(value);
     }
     public void ValueInputDepth(float value)
     {
-        sizeZ = (int)(value * 1000);
+        sizeZ = (int)(value) * 1000;
         sizeDepth.text = "" + (int)(value);
     }
 }
