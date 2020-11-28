@@ -7,13 +7,13 @@ public class MapSizeEditor : MonoBehaviour
 {
     public Text sizeWidth, sizeLongth, sizeDepth;
     public GameObject widthSlider, longthSlider, depthSlider;
-    public static int sizeX = 10, sizeY = 10, sizeZ = 10;
+    public static int sizeX = 10 * 1000, sizeY = 10 * 1000, sizeZ = 10 * 1000;
 
     private void Start()
     {
-        widthSlider.GetComponent<Slider>().value = sizeX;
-        longthSlider.GetComponent<Slider>().value = sizeY;
-        depthSlider.GetComponent<Slider>().value = sizeZ;
+        widthSlider.GetComponent<Slider>().value = sizeX / 1000;
+        longthSlider.GetComponent<Slider>().value = sizeY / 1000;
+        depthSlider.GetComponent<Slider>().value = sizeZ / 1000;
         sizeWidth.text ="" + widthSlider.GetComponent<Slider>().value;
         sizeLongth.text = "" + longthSlider.GetComponent<Slider>().value;
         sizeDepth.text = "" + depthSlider.GetComponent<Slider>().value;
