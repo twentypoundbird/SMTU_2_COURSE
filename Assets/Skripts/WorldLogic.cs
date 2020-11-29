@@ -108,7 +108,6 @@ public class WorldLogic : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("mouseDown");
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, 99999999))
@@ -120,17 +119,16 @@ public class WorldLogic : MonoBehaviour
                 int positionX = (int)(hit.collider.gameObject.transform.position.x) + differenceX * 2;
                 int positionY = (int)(hit.collider.gameObject.transform.position.y) + differenceY * 2;
                 int positionZ = (int)(hit.collider.gameObject.transform.position.z) + differenceZ * 2;
-                Debug.Log(positionX + " " + positionY + " " + positionZ);
                 miniCube = new GameObject();
                 miniCube.transform.position = new Vector3(positionX,positionY,positionZ);
                 miniCube.transform.localScale = new Vector3(step, step, step);
                 miniCube.transform.parent = transform;
                 boxOfMinicube = miniCube.AddComponent<BoxCollider>();
+                miniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                 #region generalMesh
 
                 miniCube.AddComponent<MeshRenderer>().material = generalMaterial;
-                miniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                 #endregion
             }
