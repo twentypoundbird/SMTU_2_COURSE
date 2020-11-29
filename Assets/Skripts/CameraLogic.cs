@@ -7,7 +7,7 @@ public class CameraLogic : MonoBehaviour
 {
     private void Start()
     {
-        gameObject.transform.position = new Vector3(MapSizeEditor.sizeX, 0, 0);
+        gameObject.transform.position = new Vector3(0, 0, -1 * MapSizeEditor.sizeZ);
     }
     private void Update()
     {
