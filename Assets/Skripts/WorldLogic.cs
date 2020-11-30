@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldLogic : MonoBehaviour
 {
-    private static int step = 1000;
+    private static int step = MapSizeEditor.step;
 
     public Camera camera;
 
@@ -14,9 +14,11 @@ public class WorldLogic : MonoBehaviour
     
     public static Material materialForMiniCube;
 
-    private GameObject miniCube;
+    private GameObject miniCube, newMiniCube;
     private BoxCollider boxOfMinicube;
 
+
+    float mouseScrollValue;
     float posX, posY, posZ;
 
     private void Start()
@@ -37,7 +39,7 @@ public class WorldLogic : MonoBehaviour
                     miniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
                     miniCube.transform.localScale = new Vector3(step, step, step);
                     miniCube.transform.parent = transform;
-                    boxOfMinicube = miniCube.AddComponent<BoxCollider>();
+                    miniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
 
 
                     #region generalMesh
@@ -50,57 +52,7 @@ public class WorldLogic : MonoBehaviour
             }
         }
 
-
-        //for (int x = 0; x < MapSizeEditor.sizeX / step; x++)
-        //{
-        //    for (int y = 1; y < MapSizeEditor.sizeY / step; y++)
-        //    {
-        //        for (int z = 0; z < MapSizeEditor.sizeZ / step; z++)
-        //        {
-        //            if (y != 0 ? cubeEnable[x, y - 1, z] : false ||
-        //                x != 0 ? cubeEnable[x - 1, y, z] : false ||
-        //                z != 0 ? cubeEnable[x, y, z - 1] : false ||
-        //                y != MapSizeEditor.sizeY / step - 1 ? cubeEnable[x, y + 1, z] : false ||
-        //                x != MapSizeEditor.sizeX / step - 1 ? cubeEnable[x + 1, y, z]  : false ||
-        //                z != MapSizeEditor.sizeZ / step - 1 ? cubeEnable[x, y, z + 1] : false)
-        //            {
-        //                if(!cubeEnable[x,y,z])
-        //                {
-        //                    int xCoord = x * step - MapSizeEditor.sizeX / 2 + step / 2;
-        //                    int yCoord = y * step - MapSizeEditor.sizeY / 2 + step / 2;
-        //                    int zCoord = z * step - MapSizeEditor.sizeZ / 2 + step / 2;
-
-        //                    miniCube = new GameObject();
-        //                    miniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
-        //                    miniCube.transform.localScale = new Vector3(step, step, step);
-        //                    miniCube.transform.parent = transform;
-
-        //                    boxOfMinicube = miniCube.AddComponent<BoxCollider>();
-        //                    miniCube.AddComponent<miniCubeLogic>().isInvis = true;
-
-        //                    #region generalMesh
-
-        //                    miniCube.AddComponent<MeshRenderer>().material = invisibleMaterial;
-        //                    miniCube.AddComponent<MeshFilter>().mesh = generalMesh;
-
-        //                    #endregion
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
         materialForMiniCube = sandMaterial;
-
-        //miniCube = new GameObject();
-        //miniCube.transform.localScale = new Vector3(step, step, step);
-        //miniCube.transform.parent = transform;
-        //#region generalMesh
-
-        //miniCube.AddComponent<MeshRenderer>().material = generalMaterial;
-        //miniCube.AddComponent<MeshFilter>().mesh = generalMesh;
-
-        //#endregion
     }
 
 
@@ -108,35 +60,50 @@ public class WorldLogic : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, 99999999))
+            if (newMiniCube == null)
             {
-                // hit.collider.gameObject.GetComponent<MeshRenderer>().material = sandMaterial;
-                int differenceX = Mathf.Abs((int)(hit.point.x - hit.collider.gameObject.transform.position.x)) < step / 2 ? 0 : (int)(hit.point.x - hit.collider.gameObject.transform.position.x);
-                int differenceY = Mathf.Abs((int)(hit.point.y - hit.collider.gameObject.transform.position.y)) < step / 2 ? 0 : (int)(hit.point.y - hit.collider.gameObject.transform.position.y);
-                int differenceZ = Mathf.Abs((int)(hit.point.z - hit.collider.gameObject.transform.position.z)) < step / 2 ? 0 : (int)(hit.point.z - hit.collider.gameObject.transform.position.z);
-                int positionX = (int)(hit.collider.gameObject.transform.position.x) + differenceX * 2;
-                int positionY = (int)(hit.collider.gameObject.transform.position.y) + differenceY * 2;
-                int positionZ = (int)(hit.collider.gameObject.transform.position.z) + differenceZ * 2;
-                miniCube = new GameObject();
-                miniCube.transform.position = new Vector3(positionX,positionY,positionZ);
-                miniCube.transform.localScale = new Vector3(step, step, step);
-                miniCube.transform.parent = transform;
-                boxOfMinicube = miniCube.AddComponent<BoxCollider>();
-                miniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                newMiniCube = new GameObject();
+                newMiniCube.transform.localScale = new Vector3(step, step, step);
+                newMiniCube.transform.parent = transform;
+                newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                 #region generalMesh
 
-                miniCube.AddComponent<MeshRenderer>().material = generalMaterial;
+                newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
 
                 #endregion
             }
+            else
+            {
+                newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0,0,0);
+                newMiniCube = null;
+                mouseScrollValue = 0;
+            }
         }
 
-        //posX = (int)(Input.mousePosition.x);
-        //posY = (int)(Input.mousePosition.y / step);
-        //posZ = (int)(Input.mousePosition.z / step);
-        //miniCube.transform.localPosition = new Vector3(posX,posY,posZ);
+
+        if(newMiniCube != null)
+        {
+            if (Mathf.Abs(Input.mouseScrollDelta.y) > 0)
+            {
+                mouseScrollValue += Input.mouseScrollDelta.y;
+            }
+            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 10000))
+            {
+                float positionX, positionY, positionZ, differenceX, differenceY, differenceZ;
+                differenceX = Mathf.Abs(hit.point.x - hit.collider.gameObject.transform.position.x) < step / 2 - 0.0001f ? 0 : hit.point.x - hit.collider.gameObject.transform.position.x;
+                differenceY = Mathf.Abs(hit.point.y - hit.collider.gameObject.transform.position.y) < step / 2 - 0.0001f ? 0 : hit.point.y - hit.collider.gameObject.transform.position.y;
+                differenceZ = Mathf.Abs(hit.point.z - hit.collider.gameObject.transform.position.z) < step / 2 - 0.0001f ? 0 : hit.point.z - hit.collider.gameObject.transform.position.z;
+
+                positionX = hit.collider.gameObject.transform.position.x + differenceX * 2;
+                positionY = hit.collider.gameObject.transform.position.y + differenceY * 2 + mouseScrollValue * step;
+                positionZ = hit.collider.gameObject.transform.position.z + differenceZ * 2;
+
+
+                newMiniCube.transform.position = new Vector3(positionX, positionY, positionZ);
+            }
+        }
     }
 }
