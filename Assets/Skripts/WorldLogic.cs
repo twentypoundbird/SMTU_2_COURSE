@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WorldLogic : MonoBehaviour
 {
+    public GameObject submarine;
+
     private static int step = MapSizeEditor.step;
 
     public Camera camera;
@@ -69,9 +71,11 @@ public class WorldLogic : MonoBehaviour
 
                 #region generalMesh
 
-                newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
+                //newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
 
                 #endregion
+
+                Instantiate(submarine, newMiniCube.transform);
             }
             else
             {
