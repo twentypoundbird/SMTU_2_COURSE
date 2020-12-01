@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class WorldLogic : MonoBehaviour
 {
-    public GameObject submarine, mine;
+    public GameObject submarine, mine, chainLink, fixOnTheGround;
 
 
     private GameObject model3D;
@@ -114,6 +114,7 @@ public class WorldLogic : MonoBehaviour
                     #endregion
 
                     Instantiate(model3D, newMiniCube.transform);
+
                 }
                 else
                 {
@@ -150,6 +151,15 @@ public class WorldLogic : MonoBehaviour
 
 
                 newMiniCube.transform.position = new Vector3(positionX, positionY, positionZ);
+
+                if(model3D == mine)
+                {
+                    RaycastHit hitUnderMine;
+                    if (Physics.Raycast(newMiniCube.transform.position, -1 * newMiniCube.transform.up, out hitUnderMine, 100 * step))
+                    {
+                        
+                    }
+                }
             }
         }
     }
