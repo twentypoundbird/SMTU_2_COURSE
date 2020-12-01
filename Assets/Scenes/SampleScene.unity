@@ -414,6 +414,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   submarine: {fileID: 919132149155446097, guid: 61d6c29b093ab424e8d6b9d63f9ef3a9, type: 3}
   mine: {fileID: 919132149155446097, guid: 6fb9a280ad9a1ed45b388e0963ebcc90, type: 3}
+  chainLink: {fileID: 919132149155446097, guid: c6f2780ee3b56e045b116ac841172202, type: 3}
+  fixOnTheGround: {fileID: 919132149155446097, guid: 070b706f8410f1b409c1f3b6e75b8e7c, type: 3}
   camera: {fileID: 963194227}
   generalMaterial: {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
   invisibleMaterial: {fileID: 10650, guid: 0000000000000000f000000000000000, type: 0}

@@ -39,10 +39,10 @@ public class WorldLogic : MonoBehaviour
                 model3D = mine;
                 break;
             case 3:
-                model3D = null;
+                model3D = chainLink;
                 break;
             case 4:
-                model3D = null;
+                model3D = fixOnTheGround;
                 break;
             case 5:
                 model3D = null;
