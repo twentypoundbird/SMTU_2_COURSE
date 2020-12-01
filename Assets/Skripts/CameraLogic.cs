@@ -33,6 +33,14 @@ public class CameraLogic : MonoBehaviour
         {
             transform.position += transform.forward * Input.GetAxis("Vertical") * Time.deltaTime * 100;
         }
+        if (Mathf.Abs(Input.GetAxis("Jump")) > 0)
+        {
+            transform.position += transform.up * Input.GetAxis("Jump") * Time.deltaTime * 100;
+        }
+        if (Mathf.Abs(Input.GetAxis("Ctrl")) > 0)
+        {
+            transform.position += transform.up * -1 * Input.GetAxis("Ctrl") * Time.deltaTime * 100;
+        }
         if (Input.GetMouseButtonDown(2))
         {
             Ray ray = camera.ScreenPointToRay(ray_Start_Pos);
