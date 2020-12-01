@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class WorldLogic : MonoBehaviour
 {
+
     public GameObject submarine, mine, chainLink, fixOnTheGround;
 
 
@@ -62,18 +63,18 @@ public class WorldLogic : MonoBehaviour
 
     private void Start()
     {
-        gameObject.transform.localScale = new Vector3(MapSizeEditor.sizeX, MapSizeEditor.sizeY, MapSizeEditor.sizeZ);
+        gameObject.transform.localScale = new Vector3(MapSizeEditor.countX * step, MapSizeEditor.countY * step, MapSizeEditor.countZ * step);
 
 
-        for(int x = 0; x < MapSizeEditor.sizeX / step; x++)
+        for(int x = 0; x < MapSizeEditor.countX; x++)
         {
             for (int y = 0; /*y < MapSizeEditor.sizeY / step*/ y<1; y++)
             {
-                for (int z = 0; z < MapSizeEditor.sizeZ / step; z++)
+                for (int z = 0; z < MapSizeEditor.countZ; z++)
                 {
-                    int xCoord = x * step - MapSizeEditor.sizeX / 2 + step / 2;
-                    int yCoord = y * step - MapSizeEditor.sizeY / 2 + step / 2;
-                    int zCoord = z * step - MapSizeEditor.sizeZ / 2 + step / 2;
+                    int xCoord = (int)(step * (x - MapSizeEditor.countX / 2 + 0.5));
+                    int yCoord = (int)(step * (y - MapSizeEditor.countY / 2 + 0.5));
+                    int zCoord = (int)(step * (z - MapSizeEditor.countZ / 2 + 0.5));
                     miniCube = new GameObject();
                     miniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
                     miniCube.transform.localScale = new Vector3(step, step, step);

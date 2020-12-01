@@ -7,7 +7,7 @@ public class CameraLogic : MonoBehaviour
 {
     Camera camera;
 
-    private float limitY = 80, distance = MapSizeEditor.sizeZ * 2, sensitivity = 1f;
+    private float limitY = 80, distance = MapSizeEditor.countZ * MapSizeEditor.step * 2, sensitivity = 1f;
     private float x, y;
     private Vector3 offset = new Vector3(0,0,0), target;
     private Vector3 ray_Start_Pos = new Vector3(Screen.width / 2, Screen.height / 2, 0);

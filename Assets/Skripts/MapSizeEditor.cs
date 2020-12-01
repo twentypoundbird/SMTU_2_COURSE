@@ -8,13 +8,13 @@ public class MapSizeEditor : MonoBehaviour
     public Text sizeWidth, sizeLongth, sizeDepth;
     public GameObject widthSlider, longthSlider, depthSlider;
     public static int step = 10;
-    public static int sizeX = 10 * step, sizeY = 10 * step, sizeZ = 10 * step;
+    public static int countX = 10, countY = 10, countZ = 10;
 
     private void Start()
     {
-        widthSlider.GetComponent<Slider>().value = sizeX / step;
-        longthSlider.GetComponent<Slider>().value = sizeY / step;
-        depthSlider.GetComponent<Slider>().value = sizeZ / step;
+        widthSlider.GetComponent<Slider>().value = countX;
+        longthSlider.GetComponent<Slider>().value = countY;
+        depthSlider.GetComponent<Slider>().value = countZ;
         sizeWidth.text ="" + widthSlider.GetComponent<Slider>().value;
         sizeLongth.text = "" + longthSlider.GetComponent<Slider>().value;
         sizeDepth.text = "" + depthSlider.GetComponent<Slider>().value;
@@ -22,17 +22,17 @@ public class MapSizeEditor : MonoBehaviour
 
     public void ValueInputWidth(float value)
     {
-        sizeX = (int)(value) * step;
+        countX = (int)(value);
         sizeWidth.text = "" + (int)(value);
     }
     public void ValueInputLongth(float value)
     {
-        sizeY = (int)(value) * step;
+        countY = (int)(value);
         sizeLongth.text = "" + (int)(value);
     }
     public void ValueInputDepth(float value)
     {
-        sizeZ = (int)(value) * step;
+        countZ = (int)(value);
         sizeDepth.text = "" + (int)(value);
     }
 }
