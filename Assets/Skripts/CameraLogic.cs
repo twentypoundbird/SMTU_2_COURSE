@@ -24,21 +24,31 @@ public class CameraLogic : MonoBehaviour
     }
     private void Update()
     {
-        
 
+        if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0)
+        {
+            transform.position += transform.right* Input.GetAxis("Horizontal")*Time.deltaTime * 100;
+        }
+        if (Mathf.Abs(Input.GetAxis("Vertical")) > 0)
+        {
+            transform.position += transform.forward * Input.GetAxis("Vertical") * Time.deltaTime * 100;
+        }
         if (Input.GetMouseButtonDown(2))
         {
-            Ray ray = ray = camera.ScreenPointToRay(ray_Start_Pos);
+            Ray ray = camera.ScreenPointToRay(ray_Start_Pos);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit,1000))
             {
                 target = hit.point;
-                distance = hit.distance;
+                target.x += 0.1f;
+                distance = Vector3.Distance(hit.point, ray.origin) + Vector3.Distance(ray.origin, transform.position);
+                Debug.Log(distance);
             }
             else
             {
                 target = transform.position + transform.forward * 100;
                 distance = 100;
+                Debug.Log(target.x + " " + target.y + " " + target.z);
             }
         }
 
@@ -46,7 +56,7 @@ public class CameraLogic : MonoBehaviour
         {
 
             //offset.z = Mathf.Clamp(offset.z, -Mathf.Abs(distance), -Mathf.Abs(zoomMin));
-            offset.z = -Mathf.Abs(distance);
+            offset.z = -distance;
 
             x = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivity;
             y += Input.GetAxis("Mouse Y") * sensitivity;
