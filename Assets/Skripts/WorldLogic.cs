@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class WorldLogic : MonoBehaviour
 {
-    public GameObject submarine;
+    public GameObject submarine, mine;
+
+
+    private GameObject model3D;
 
     private static int step = MapSizeEditor.step;
 
@@ -22,6 +27,38 @@ public class WorldLogic : MonoBehaviour
 
     float mouseScrollValue;
     float posX, posY, posZ;
+
+    public void IsTapped(int num)
+    {
+        switch (num)
+        {
+            case 1:
+                model3D = submarine;
+                break;
+            case 2:
+                model3D = mine;
+                break;
+            case 3:
+                model3D = null;
+                break;
+            case 4:
+                model3D = null;
+                break;
+            case 5:
+                model3D = null;
+                break;
+            case 6:
+                model3D = null;
+                break;
+            case 7:
+                model3D = null;
+                break;
+            default:
+                model3D = null;
+                break;
+
+        }
+    }
 
     private void Start()
     {
@@ -57,36 +94,42 @@ public class WorldLogic : MonoBehaviour
         materialForMiniCube = sandMaterial;
     }
 
-
-    private void Update()
+    void SpawnerControl()
     {
         if (Input.GetMouseButtonDown(0))
         {
             if (newMiniCube == null)
             {
-                newMiniCube = new GameObject();
-                newMiniCube.transform.localScale = new Vector3(step, step, step);
-                newMiniCube.transform.parent = transform;
-                newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                if (model3D != null)
+                {
+                    newMiniCube = new GameObject();
+                    newMiniCube.transform.localScale = new Vector3(step, step, step);
+                    newMiniCube.transform.parent = transform;
+                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
-                #region generalMesh
+                    #region generalMesh
 
-                //newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
+                    //newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
 
-                #endregion
+                    #endregion
 
-                Instantiate(submarine, newMiniCube.transform);
+                    Instantiate(model3D, newMiniCube.transform);
+                }
+                else
+                {
+                    Debug.Log("нет модели");
+                }
             }
             else
             {
-                newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0,0,0);
+                newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                 newMiniCube = null;
                 mouseScrollValue = 0;
             }
         }
 
 
-        if(newMiniCube != null)
+        if (newMiniCube != null)
         {
             if (Mathf.Abs(Input.mouseScrollDelta.y) > 0)
             {
@@ -108,6 +151,14 @@ public class WorldLogic : MonoBehaviour
 
                 newMiniCube.transform.position = new Vector3(positionX, positionY, positionZ);
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            SpawnerControl();
         }
     }
 }

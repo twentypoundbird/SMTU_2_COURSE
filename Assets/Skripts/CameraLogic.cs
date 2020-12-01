@@ -69,7 +69,6 @@ public class CameraLogic : MonoBehaviour
             y += Input.GetAxis("Mouse Y") * sensitivity;
             y = Mathf.Clamp(y, -limitY, limitY);
             transform.localEulerAngles = new Vector3(-y, x, 0);
-            Debug.Log(target.x);
             transform.position = transform.localRotation * offset + target;
         }
         if (Input.GetMouseButton(1))
