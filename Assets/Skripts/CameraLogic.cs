@@ -15,9 +15,9 @@ public class CameraLogic : MonoBehaviour
     {
         limitY = Mathf.Abs(limitY);
         if (limitY > 90) limitY = 90;
-        offset = new Vector3(0, 0, -Mathf.Abs(distance) / 2);
+        offset = new Vector3((MapSizeEditor.step * MapSizeEditor.countX / 2), (MapSizeEditor.step * MapSizeEditor.countY / 2), -(MapSizeEditor.step * MapSizeEditor.countZ));
 
-        transform.position = new Vector3(0, 0, 0) + offset;
+        transform.position = offset;
 
 
         camera = gameObject.GetComponent<Camera>();

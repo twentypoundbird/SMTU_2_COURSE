@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Reflection;
+using System;
 
 public class WorldLogic : MonoBehaviour
 {
@@ -72,9 +74,9 @@ public class WorldLogic : MonoBehaviour
             {
                 for (int z = 0; z < MapSizeEditor.countZ; z++)
                 {
-                    int xCoord = (int)(step * (x - MapSizeEditor.countX / 2 + 0.5));
-                    int yCoord = (int)(step * (y - MapSizeEditor.countY / 2 + 0.5));
-                    int zCoord = (int)(step * (z - MapSizeEditor.countZ / 2 + 0.5));
+                    int xCoord = (int)(step * (x/* - MapSizeEditor.countX / 2 + 0.5*/));
+                    int yCoord = (int)(step * (y/* - MapSizeEditor.countY / 2 + 0.5*/));
+                    int zCoord = (int)(step * (z/* - MapSizeEditor.countZ / 2 + 0.5*/));
                     miniCube = new GameObject();
                     miniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
                     miniCube.transform.localScale = new Vector3(step, step, step);
@@ -150,6 +152,13 @@ public class WorldLogic : MonoBehaviour
                 positionY = hit.collider.gameObject.transform.position.y + differenceY * 2 + mouseScrollValue * step;
                 positionZ = hit.collider.gameObject.transform.position.z + differenceZ * 2;
 
+                int xCoord = (int)((positionX / step) - 0.5 + MapSizeEditor.countX / 2);
+                int yCoord = (int)((positionY / step) - 0.5 + MapSizeEditor.countY / 2);
+                int zCoord = (int)((positionZ / step) - 0.5 + MapSizeEditor.countZ / 2);
+
+                Debug.Log("Cord{" + positionX + ":" + positionY + ":" + positionZ + "}");
+                Debug.Log("RealCord{" + xCoord + ":" + yCoord + ":" + zCoord + "}");
+                
 
                 newMiniCube.transform.position = new Vector3(positionX, positionY, positionZ);
 
