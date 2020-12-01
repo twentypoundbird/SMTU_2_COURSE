@@ -7,7 +7,7 @@ public class CameraLogic : MonoBehaviour
 {
     Camera camera;
 
-    private float limitY = 80, distance = MapSizeEditor.countZ * MapSizeEditor.step * 2, sensitivity = 1f;
+    private float limitY = 80, distance = MapSizeEditor.countZ * MapSizeEditor.step , sensitivity = 1f;
     private float x, y;
     private Vector3 offset = new Vector3(0,0,0), target;
     private Vector3 ray_Start_Pos = new Vector3(Screen.width / 2, Screen.height / 2, 0);
@@ -15,10 +15,9 @@ public class CameraLogic : MonoBehaviour
     {
         limitY = Mathf.Abs(limitY);
         if (limitY > 90) limitY = 90;
-        offset = new Vector3((MapSizeEditor.step * MapSizeEditor.countX / 2), (MapSizeEditor.step * MapSizeEditor.countY / 2), -(MapSizeEditor.step * MapSizeEditor.countZ));
+        offset = new Vector3(0, 0, -distance);
 
-        transform.position = offset;
-
+        transform.position = new Vector3((MapSizeEditor.step * MapSizeEditor.countX / 2), (MapSizeEditor.step * MapSizeEditor.countY / 2), -(MapSizeEditor.step * MapSizeEditor.countZ));
 
         camera = gameObject.GetComponent<Camera>();
     }
