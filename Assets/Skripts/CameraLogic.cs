@@ -7,7 +7,7 @@ public class CameraLogic : MonoBehaviour
 {
     Camera camera;
 
-    private float limitY = 80, distance = MapSizeEditor.countZ * MapSizeEditor.step * 2, sensitivity = 1f;
+    private float limitY = 80, distance = MapSizeEditor.countZ * MapSizeEditor.step * 2, sensitivity = 1f, speedUp;
     private float x, y;
     private Vector3 offset = new Vector3(0,0,0), target;
     private Vector3 ray_Start_Pos = new Vector3(Screen.width / 2, Screen.height / 2, 0);
@@ -27,19 +27,27 @@ public class CameraLogic : MonoBehaviour
 
         if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0)
         {
-            transform.position += transform.right* Input.GetAxis("Horizontal")*Time.deltaTime * 100;
+            transform.position += transform.right* Input.GetAxis("Horizontal")*Time.deltaTime * 100 * speedUp;
         }
         if (Mathf.Abs(Input.GetAxis("Vertical")) > 0)
         {
-            transform.position += transform.forward * Input.GetAxis("Vertical") * Time.deltaTime * 100;
+            transform.position += transform.forward * Input.GetAxis("Vertical") * Time.deltaTime * 100 * speedUp;
         }
         if (Mathf.Abs(Input.GetAxis("Jump")) > 0)
         {
-            transform.position += transform.up * Input.GetAxis("Jump") * Time.deltaTime * 100;
+            transform.position += new Vector3(0,Input.GetAxis("Jump") * Time.deltaTime * 100 * speedUp, 0);
         }
         if (Mathf.Abs(Input.GetAxis("Ctrl")) > 0)
         {
-            transform.position += transform.up * -1 * Input.GetAxis("Ctrl") * Time.deltaTime * 100;
+            transform.position += new Vector3(0, -1 * Input.GetAxis("Ctrl") * Time.deltaTime * 100 * speedUp, 0);
+        }
+        if(Input.GetAxis("Shift") > 0)
+        {
+            speedUp = 4;
+        }
+        else
+        {
+            speedUp = 1;
         }
         if (Input.GetMouseButtonDown(2))
         {
