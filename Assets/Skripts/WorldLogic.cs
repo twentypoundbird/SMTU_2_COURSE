@@ -11,7 +11,6 @@ public class WorldLogic : MonoBehaviour
     public GameObject submarine, mine, chainLink, fixOnTheGround;
 
     private GameObject model3D;
-    private int modelID;
 
     private static int step = MapSizeEditor.step;
 
@@ -40,9 +39,9 @@ public class WorldLogic : MonoBehaviour
     {
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
+
     public void IsTapped(int num)
     {
-        modelID = num;
         switch (num)
         {
             case 1:
@@ -58,7 +57,6 @@ public class WorldLogic : MonoBehaviour
                 model3D = fixOnTheGround;
                 break;
             default:
-                modelID = 0;
                 model3D = null;
                 break;
         }
@@ -109,18 +107,24 @@ public class WorldLogic : MonoBehaviour
             {
                 if (model3D != null)
                 {
+                    //newMiniCube = new GameObject;
                     newMiniCube = new GameObject();
                     newMiniCube.transform.localScale = new Vector3(step + 1, step +1 , step + 1);
-                    newMiniCube.transform.parent = transform;
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
+                    if (newMiniCube == model3D) Debug.Log("Всё заебись");
                     #region generalMesh
 
                     //newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
 
                     #endregion
 
+                    //Instantiate(model3D, newMiniCube.transform);
                     Instantiate(model3D, newMiniCube.transform);
+                    if(model3D == mine)
+                    {
+                        newMiniCube.tag = "mine";
+                    }
 
                 }
                 else
@@ -130,7 +134,6 @@ public class WorldLogic : MonoBehaviour
             }
             else
             {
-                Debug.Log("Нажал");
                 if (xCoord >= 0 && xCoord < MapSizeEditor.countX)
                 {
                     if (yCoord >= 0 && yCoord < MapSizeEditor.countY)
@@ -139,9 +142,76 @@ public class WorldLogic : MonoBehaviour
                         {
                             if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null)
                             {
-                                newMiniCube.transform.localScale = new Vector3(step / 100f, step / 100f, step / 100f);
+                                newMiniCube.transform.localScale = new Vector3(step , step , step );
+                                newMiniCube.transform.parent = transform;
                                 newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                                 TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
+
+                                if(model3D == mine)
+                                {
+                                    for (int i = yCoord; i>= 1; i--)
+                                    {
+                                        if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
+                                        {
+                                            if (TypeOfObjectOnMap[xCoord, i - 1, zCoord].tag == "mine")
+                                            {
+                                                Debug.LogWarning("Нажал2");
+                                                Destroy(TypeOfObjectOnMap[xCoord, i - 1, zCoord]);
+                                                TypeOfObjectOnMap[xCoord, i - 1, zCoord] = null;
+                                            }
+                                        }
+                                        if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
+                                        {
+                                            if (TypeOfObjectOnMap[xCoord, i - 1, zCoord].tag != "chain")
+                                            {
+                                                if (TypeOfObjectOnMap[xCoord, i, zCoord].tag != "mine")
+                                                {
+                                                    // 
+                                                    newMiniCube = new GameObject();
+                                                    newMiniCube.transform.localScale = new Vector3(step, step, step);
+                                                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                                                    newMiniCube.transform.position = new Vector3(xCoord * step, i * step, zCoord * step);
+                                                    newMiniCube.transform.parent = transform;
+                                                    newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
+                                                    Destroy(TypeOfObjectOnMap[xCoord, i, zCoord]);
+                                                    Instantiate(fixOnTheGround, newMiniCube.transform);
+                                                    Instantiate(chainLink, newMiniCube.transform);
+                                                    newMiniCube.tag = "chain";
+                                                    TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
+                                                    newMiniCube = null;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    Instantiate(fixOnTheGround, newMiniCube.transform);
+                                                    TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
+                                                    newMiniCube = null;
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                            
+                                        }
+                                        yCoord = i - 1;
+                                        xCoord = tempxCoord;
+                                        zCoord = tempzCoord;
+                                        newMiniCube = new GameObject();
+                                        newMiniCube.transform.localScale = new Vector3(step, step, step);
+                                        newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                                        newMiniCube.transform.position = new Vector3(xCoord * step, yCoord * step, zCoord * step);
+                                        newMiniCube.transform.parent = transform;
+                                        newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
+                                        Instantiate(chainLink, newMiniCube.transform);
+                                        newMiniCube.tag = "chain";
+                                        TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
+
+                                    }
+
+                                }
+
                                 newMiniCube = null;
                                 mouseScrollValue = 0;
                             }

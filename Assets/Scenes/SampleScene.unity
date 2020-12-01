@@ -421,7 +421,6 @@ MonoBehaviour:
   invisibleMaterial: {fileID: 10650, guid: 0000000000000000f000000000000000, type: 0}
   sandMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   generalMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  cl_warning: {r: 1, g: 0, b: 0, a: 0.58431375}
 --- !u!33 &617291382
 MeshFilter:
   m_ObjectHideFlags: 0
