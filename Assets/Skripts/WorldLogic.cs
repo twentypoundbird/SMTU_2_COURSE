@@ -23,7 +23,7 @@ public class WorldLogic : MonoBehaviour
 
     public static Material materialForMiniCube;
 
-    private GameObject miniCube, newMiniCube;
+    private GameObject newMiniCube;
     private BoxCollider boxOfMinicube;
 
     GameObject[,,] TypeOfObjectOnMap;
@@ -31,10 +31,10 @@ public class WorldLogic : MonoBehaviour
     float mouseScrollValue;
     float posX, posY, posZ;
 
-    public Color cl_warning;
-    private Color cl_temp;
     private float positionX, positionY, positionZ, differenceX, differenceY, differenceZ;
-    int xCoord,yCoord,zCoord;
+    int xCoord, yCoord, zCoord;
+    int tempxCoord = 0, tempzCoord = 0;
+    bool Boolfas;
 
     WorldLogic()
     {
@@ -77,23 +77,27 @@ public class WorldLogic : MonoBehaviour
                     xCoord = (int)(step * (x/* - MapSizeEditor.countX / 2 + 0.5*/));
                     yCoord = (int)(step * (y/* - MapSizeEditor.countY / 2 + 0.5*/));
                     zCoord = (int)(step * (z/* - MapSizeEditor.countZ / 2 + 0.5*/));
-                    miniCube = new GameObject();
-                    miniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
-                    miniCube.transform.localScale = new Vector3(step, step, step);
-                    miniCube.transform.parent = transform;
-                    miniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
+                    newMiniCube = new GameObject();
+                    newMiniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
+                    newMiniCube.transform.localScale = new Vector3(step, step, step);
+                    newMiniCube.transform.parent = transform;
+                    newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
 
 
                     #region generalMesh
 
-                    miniCube.AddComponent<MeshRenderer>().material = generalMaterial;
-                    miniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                    newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
+                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
+                    TypeOfObjectOnMap[x, y, z] = newMiniCube;
                     #endregion
                 }
             }
         }
-
+        newMiniCube = null;
+        xCoord = 0;
+        yCoord = 0; 
+        zCoord = 0;
         materialForMiniCube = sandMaterial;
     }
 
@@ -126,17 +130,27 @@ public class WorldLogic : MonoBehaviour
             }
             else
             {
-                if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null)
+                Debug.Log("Нажал");
+                if (xCoord >= 0 && xCoord < MapSizeEditor.countX)
                 {
-                    newMiniCube.transform.localScale = new Vector3(step / 100f, step / 100f, step / 100f);
-                    newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
-                    TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
-                    newMiniCube = null;
-                    mouseScrollValue = 0;
-                }
-                else
-                {
-                    Debug.LogWarning("Место занято другим объектом!");
+                    if (yCoord >= 0 && yCoord < MapSizeEditor.countY)
+                    {
+                        if (zCoord >= 0 && zCoord < MapSizeEditor.countZ)
+                        {
+                            if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null)
+                            {
+                                newMiniCube.transform.localScale = new Vector3(step / 100f, step / 100f, step / 100f);
+                                newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
+                                TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
+                                newMiniCube = null;
+                                mouseScrollValue = 0;
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Место занято другим объектом!");
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -160,48 +174,54 @@ public class WorldLogic : MonoBehaviour
                 positionY = hit.collider.gameObject.transform.position.y + differenceY * 2 + mouseScrollValue * step;
                 positionZ = hit.collider.gameObject.transform.position.z + differenceZ * 2;
 
-                xCoord = (int)(positionX / step + 0.1);
-                yCoord = (int)(positionY / step + 0.1);
-                zCoord = (int)(positionZ / step + 0.1);
-
-                Debug.Log("Cord{" + positionX + ":" + positionY + ":" + positionZ + "}");
-                Debug.Log("RealCord{" + xCoord + ":" + yCoord + ":" + zCoord + "}");
 
 
-                if (positionX >= 0 && xCoord < MapSizeEditor.countX)
+
+                if (positionY >= 0 && positionY / step + 0.1 < MapSizeEditor.countY)
                 {
-                    if (positionY >= 0 && yCoord < MapSizeEditor.countY)
+                    yCoord = (int)(positionY / step + 0.1);
+                    if (positionX >= 0 && positionX / step + 0.1 < MapSizeEditor.countX)
                     {
-                        if (positionZ >= 0 && zCoord < MapSizeEditor.countZ)
+                        tempxCoord = (int)(positionX / step + 0.1);
+                    }
+                    if (positionZ >= 0 && positionZ/ step + 0.1 < MapSizeEditor.countZ)
+                    {
+                        tempzCoord = (int)(positionZ / step + 0.1);
+                    }
+                    //if (model3D == mine) { }
+                }
+                else
+                {
+                    mouseScrollValue = 0;
+                }
+                Boolfas = false;
+                for (int i = yCoord; i < MapSizeEditor.countY; i++)
+                {
+                    if (TypeOfObjectOnMap[tempxCoord, i, tempzCoord] == null)
+                    {
+                        xCoord = tempxCoord;
+                        yCoord = i;
+                        zCoord = tempzCoord;
+                        Boolfas = true;
+                        break;
+                    }
+                }
+                if(!Boolfas)
+                { 
+                    for (int i = MapSizeEditor.countY-1; i >= 0; i--)
+                    {
+                        if (TypeOfObjectOnMap[tempxCoord, i, tempzCoord] == null)
                         {
-                            newMiniCube.transform.position = new Vector3(positionX, positionY, positionZ);
-                            if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null)
-                            {
-                                if (cl_temp != newMiniCube.GetComponentInChildren<MeshRenderer>().sharedMaterial.color)
-                                {
-                                    if (cl_warning != newMiniCube.GetComponentInChildren<MeshRenderer>().sharedMaterial.color)
-                                    {
-                                        cl_temp = newMiniCube.GetComponentInChildren<MeshRenderer>().sharedMaterial.color;
-                                    }
-                                }
-                                newMiniCube.GetComponentInChildren<MeshRenderer>().sharedMaterial.color = cl_temp;
-                            }
-                            else
-                            {
-                                newMiniCube.GetComponentInChildren<MeshRenderer>().sharedMaterial.color = cl_warning;
-                                newMiniCube.GetComponentInChildren<MeshRenderer>().sharedMaterial.color = cl_warning;
-                            }
-                            if (model3D == mine)
-                            {
-                                RaycastHit hitUnderMine;
-                                if (Physics.Raycast(newMiniCube.transform.position, -1 * newMiniCube.transform.up, out hitUnderMine, 100 * step))
-                                {
-
-                                }
-                            }
+                            xCoord = tempxCoord;
+                            yCoord = i;
+                            zCoord = tempzCoord;
+                            break;
                         }
                     }
                 }
+                if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null) newMiniCube.transform.position = new Vector3(xCoord * step, yCoord * step, zCoord * step);
+                Debug.Log("Cord{" + positionX + ":" + positionY + ":" + positionZ + "}");
+                Debug.Log("RealCord{" + xCoord + ":" + yCoord + ":" + zCoord + "}");
             }
         }
     }
