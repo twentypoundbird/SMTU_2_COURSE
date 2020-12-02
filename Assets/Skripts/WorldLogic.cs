@@ -99,7 +99,12 @@ public class WorldLogic : MonoBehaviour
         materialForMiniCube = sandMaterial;
     }
 
-    void SpawnerControl()
+    /// <summary> Метод, отвечающий за инициализацию 
+    /// <see cref="UnityEngine.GameObject"/> 
+    ///  на сцене
+    ///  <para> Является методом класса <seealso cref="WorldLogic"/></para>
+    /// </summary>
+    void SpawnerControl(GameObject model3D)
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -234,7 +239,7 @@ public class WorldLogic : MonoBehaviour
             }
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 10000))
+            if (Physics.Raycast(ray, out hit, 1000 * step))
             {
                 differenceX = Mathf.Abs(hit.point.x - hit.collider.gameObject.transform.position.x) < step / 2 - 0.0001f ? 0 : hit.point.x - hit.collider.gameObject.transform.position.x;
                 differenceY = Mathf.Abs(hit.point.y - hit.collider.gameObject.transform.position.y) < step / 2 - 0.0001f ? 0 : hit.point.y - hit.collider.gameObject.transform.position.y;
@@ -296,11 +301,45 @@ public class WorldLogic : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Метод, который удаляет <see cref="UnityEngine.GameObject"/> со сцены 
+    /// </summary>
+    /// <remarks><see cref="UnityEngine.GameObject"/> выбирается с помощью <see cref="UnityEngine.Physics.Raycast(Ray, out RaycastHit, float)"/>
+    /// </remarks>
+    void DeleteControl()
+    {
+        if (Input.GetMouseButtonDown(0) && Input.GetAxis("Shift")>0)
+        {
+            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit, 100 * step)){
+                Destroy(hit.collider.gameObject);
+                if(hit.collider.gameObject.tag == "mine")
+                {
+                    for(int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >=0; i--)
+                    {
+                        Debug.LogWarning((int)hit.collider.gameObject.transform.position.x / step);
+                        if(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1),i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)].tag == "chain")
+                        {
+                            Destroy(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void Update()
     {
+        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetAxis("Shift") <= 0)
+        {
+            SpawnerControl(model3D);
+        }
         if (!EventSystem.current.IsPointerOverGameObject())
         {
-            SpawnerControl();
+            DeleteControl();
         }
+
     }
 }
