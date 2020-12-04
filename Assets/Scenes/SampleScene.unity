@@ -181,8 +181,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.050980393}
-  m_RaycastTarget: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -344,7 +344,7 @@ GameObject:
   m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!65 &617291379
 BoxCollider:
@@ -416,6 +416,7 @@ MonoBehaviour:
   mine: {fileID: 919132149155446097, guid: 6fb9a280ad9a1ed45b388e0963ebcc90, type: 3}
   chainLink: {fileID: 919132149155446097, guid: 098b4d7deed9723468d686548e6de770, type: 3}
   fixOnTheGround: {fileID: 919132149155446097, guid: 8ec2405fa12c2a64f8b527f175a4a925, type: 3}
+  lighthouse: {fileID: 919132149155446097, guid: d1d64cce07b8d434986e8a11b9eb1986, type: 3}
   camera: {fileID: 963194227}
   generalMaterial: {fileID: 4874126678125670354, guid: 61d6c29b093ab424e8d6b9d63f9ef3a9, type: 3}
   invisibleMaterial: {fileID: 10650, guid: 0000000000000000f000000000000000, type: 0}
@@ -553,7 +554,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &740689714
 RectTransform:
   m_ObjectHideFlags: 0
@@ -708,7 +709,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.3794055, g: 0.5153834, b: 0.5471698, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

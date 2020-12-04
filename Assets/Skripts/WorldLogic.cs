@@ -8,7 +8,7 @@ using System;
 
 public class WorldLogic : MonoBehaviour
 {
-    public GameObject submarine, mine, chainLink, fixOnTheGround;
+    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse;
 
     private GameObject model3D;
 
@@ -39,33 +39,34 @@ public class WorldLogic : MonoBehaviour
     {
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
+    
 
     public void IsTapped(int num)
     {
-        switch (num)
+        if (newMiniCube == null)
         {
-            case 1:
-                model3D = submarine;
-                break;
-            case 2:
-                model3D = mine;
-                break;
-            case 3:
-                model3D = chainLink;
-                break;
-            case 4:
-                model3D = fixOnTheGround;
-                break;
-            default:
-                model3D = null;
-                break;
+            switch (num)
+            {
+                case 1:
+                    model3D = submarine;
+                    break;
+                case 2:
+                    model3D = mine;
+                    break;
+                case 3:
+                    model3D = lighthouse;
+                    break;
+                default:
+                    model3D = null;
+                    break;
+            }
         }
     }
 
     private void Start()
     {
         gameObject.transform.localScale = new Vector3(MapSizeEditor.countX * step, MapSizeEditor.countY * step, MapSizeEditor.countZ * step);
-
+        
         for(int x = 0; x < MapSizeEditor.countX; x++)
         {
             for (int y = 0; /*y < MapSizeEditor.sizeY / step*/ y<1; y++)
@@ -79,7 +80,7 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
                     newMiniCube.transform.localScale = new Vector3(step, step, step);
                     newMiniCube.transform.parent = transform;
-                    newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
+                    newMiniCube.AddComponent<MeshCollider>().sharedMesh = generalMesh;
 
 
                     #region generalMesh
@@ -89,6 +90,8 @@ public class WorldLogic : MonoBehaviour
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
                     #endregion
+                    newMiniCube.tag = "ground";
+                    //newMiniCube.isStatic = true;
                 }
             }
         }
@@ -97,6 +100,7 @@ public class WorldLogic : MonoBehaviour
         yCoord = 0; 
         zCoord = 0;
         materialForMiniCube = sandMaterial;
+        //gameObject.AddComponent<CombineMeshes>();
     }
 
     /// <summary> Метод, отвечающий за инициализацию 
@@ -314,7 +318,13 @@ public class WorldLogic : MonoBehaviour
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, 100 * step)){
-                Destroy(hit.collider.gameObject);
+                if (hit.collider.gameObject.tag != "ground")
+                {
+                    if (hit.collider.gameObject.tag != "chain")
+                    {
+                        Destroy(hit.collider.gameObject);
+                    }
+                }
                 if(hit.collider.gameObject.tag == "mine")
                 {
                     for(int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >=0; i--)
@@ -330,6 +340,19 @@ public class WorldLogic : MonoBehaviour
         }
     }
 
+
+    void objectRot(GameObject model)
+    {
+        if (Input.GetButtonDown("T"))
+        {
+            model.transform.Rotate(0,90,0);
+        }
+        if (Input.GetButtonDown("R"))
+        {
+            model.transform.Rotate(0, -90, 0);
+        }
+    }
+
     private void Update()
     {
         if (!EventSystem.current.IsPointerOverGameObject() && Input.GetAxis("Shift") <= 0)
@@ -339,6 +362,11 @@ public class WorldLogic : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             DeleteControl();
+        }
+        if(model3D != null && newMiniCube != null && model3D != mine)
+        {
+            objectRot(newMiniCube);
+
         }
 
     }
