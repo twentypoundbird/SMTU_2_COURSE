@@ -6,12 +6,11 @@ using UnityEngine.EventSystems;
 using System.Reflection;
 using System;
 
-public class WorldLogic : MonoBehaviour
+public class GameWorldLogic : MonoBehaviour
 {
     public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse;
 
     private GameObject model3D;
-    private int modelID;
 
     private static int step = MapSizeEditor.step;
 
@@ -27,7 +26,6 @@ public class WorldLogic : MonoBehaviour
     private BoxCollider boxOfMinicube;
 
     GameObject[,,] TypeOfObjectOnMap;
-    int[,,] TypeOfObjectOnMapInt;
 
     float mouseScrollValue;
     float posX, posY, posZ;
@@ -37,10 +35,9 @@ public class WorldLogic : MonoBehaviour
     int tempxCoord = 0, tempzCoord = 0;
     bool Boolfas, deleteMode;
 
-    WorldLogic()
+    GameWorldLogic()
     {
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
-        TypeOfObjectOnMapInt = new int[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
     
 
@@ -48,7 +45,6 @@ public class WorldLogic : MonoBehaviour
     {
         if (newMiniCube == null)
         {
-            modelID = num;
             switch (num)
             {
                 case 1:
@@ -104,7 +100,6 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
-                    TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 0;
                     #endregion
                     newMiniCube.tag = "ground";
                     //newMiniCube.isStatic = true;
@@ -122,7 +117,7 @@ public class WorldLogic : MonoBehaviour
     /// <summary> Метод, отвечающий за инициализацию 
     /// <see cref="UnityEngine.GameObject"/> 
     ///  на сцене
-    ///  <para> Является методом класса <seealso cref="WorldLogic"/></para>
+    ///  <para> Является методом класса <seealso cref="GameWorldLogic"/></para>
     /// </summary>
     void SpawnerControl(GameObject model3D)
     {
@@ -171,9 +166,8 @@ public class WorldLogic : MonoBehaviour
                                 newMiniCube.transform.parent = transform;
                                 newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                                 TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
-                                TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
 
-                                if (model3D == mine)
+                                if(model3D == mine)
                                 {
                                     for (int i = yCoord; i>= 1; i--)
                                     {
@@ -184,7 +178,6 @@ public class WorldLogic : MonoBehaviour
                                                 Debug.LogWarning("Нажал2");
                                                 Destroy(TypeOfObjectOnMap[xCoord, i - 1, zCoord]);
                                                 TypeOfObjectOnMap[xCoord, i - 1, zCoord] = null;
-                                                TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = -1;
                                             }
                                         }
                                         if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
@@ -205,7 +198,6 @@ public class WorldLogic : MonoBehaviour
                                                     Instantiate(chainLink, newMiniCube.transform);
                                                     newMiniCube.tag = "chain";
                                                     TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
-                                                    TypeOfObjectOnMapInt[xCoord, i, zCoord] = modelID;
                                                     newMiniCube = null;
                                                     break;
                                                 }
@@ -213,7 +205,6 @@ public class WorldLogic : MonoBehaviour
                                                 {
                                                     Instantiate(fixOnTheGround, newMiniCube.transform);
                                                     TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
-                                                    TypeOfObjectOnMapInt[xCoord, i, zCoord] = modelID;
                                                     newMiniCube = null;
                                                     break;
                                                 }
@@ -236,7 +227,6 @@ public class WorldLogic : MonoBehaviour
                                         Instantiate(chainLink, newMiniCube.transform);
                                         newMiniCube.tag = "chain";
                                         TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
-                                        TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
 
                                     }
 
@@ -338,8 +328,7 @@ public class WorldLogic : MonoBehaviour
         {
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, 100 * step))
-            {
+            if(Physics.Raycast(ray, out hit, 100 * step)){
                 if (hit.collider.gameObject.tag != "ground")
                 {
                     if (hit.collider.gameObject.tag != "chain")
