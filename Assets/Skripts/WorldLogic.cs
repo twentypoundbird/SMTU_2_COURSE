@@ -33,7 +33,7 @@ public class WorldLogic : MonoBehaviour
     private float positionX, positionY, positionZ, differenceX, differenceY, differenceZ;
     int xCoord, yCoord, zCoord;
     int tempxCoord = 0, tempzCoord = 0;
-    bool Boolfas;
+    bool Boolfas, deleteMode;
 
     WorldLogic()
     {
@@ -49,14 +49,25 @@ public class WorldLogic : MonoBehaviour
             {
                 case 1:
                     model3D = submarine;
+                    deleteMode = false;
                     break;
                 case 2:
                     model3D = mine;
+                    deleteMode = false;
                     break;
                 case 3:
                     model3D = lighthouse;
+                    deleteMode = false;
+                    break;
+                case 6:
+                    model3D = null;
+                    deleteMode = false;
+                    break;
+                case 7:
+                    deleteMode = true;
                     break;
                 default:
+                    deleteMode = false;
                     model3D = null;
                     break;
             }
@@ -313,7 +324,7 @@ public class WorldLogic : MonoBehaviour
     /// </remarks>
     void DeleteControl()
     {
-        if (Input.GetMouseButtonDown(0) && Input.GetAxis("Shift")>0)
+        if (Input.GetMouseButtonDown(0) && deleteMode)
         {
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -324,15 +335,15 @@ public class WorldLogic : MonoBehaviour
                     {
                         Destroy(hit.collider.gameObject);
                     }
-                }
-                if(hit.collider.gameObject.tag == "mine")
-                {
-                    for(int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >=0; i--)
+                    if (hit.collider.gameObject.tag == "mine")
                     {
-                        Debug.LogWarning((int)hit.collider.gameObject.transform.position.x / step);
-                        if(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1),i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)].tag == "chain")
+                        for (int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >= 0; i--)
                         {
-                            Destroy(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
+                            Debug.LogWarning((int)hit.collider.gameObject.transform.position.x / step);
+                            if (TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)].tag == "chain")
+                            {
+                                Destroy(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
+                            }
                         }
                     }
                 }
@@ -355,7 +366,7 @@ public class WorldLogic : MonoBehaviour
 
     private void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetAxis("Shift") <= 0)
+        if (!EventSystem.current.IsPointerOverGameObject() && !deleteMode)
         {
             SpawnerControl(model3D);
         }
