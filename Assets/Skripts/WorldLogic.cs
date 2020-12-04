@@ -104,7 +104,7 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
-                    TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 0;
+                    TypeOfObjectOnMapInt[x, y, z] = 0;
                     #endregion
                     newMiniCube.tag = "ground";
                     //newMiniCube.isStatic = true;
@@ -134,8 +134,9 @@ public class WorldLogic : MonoBehaviour
                 {
                     //newMiniCube = new GameObject;
                     newMiniCube = new GameObject();
-                    newMiniCube.transform.localScale = new Vector3(step + 1, step +1 , step + 1);
+                    newMiniCube.transform.localScale = new Vector3(step + 2, step + 2 , step + 2);
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                    newMiniCube.AddComponent<ObjectID>();
 
                     if (newMiniCube == model3D) Debug.Log("Всё заебись");
                     #region generalMesh
@@ -320,8 +321,8 @@ public class WorldLogic : MonoBehaviour
                     }
                 }
                 if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null) newMiniCube.transform.position = new Vector3(xCoord * step, yCoord * step, zCoord * step);
-                Debug.Log("Cord{" + positionX + ":" + positionY + ":" + positionZ + "}");
-                Debug.Log("RealCord{" + xCoord + ":" + yCoord + ":" + zCoord + "}");
+                //Debug.Log("Cord{" + positionX + ":" + positionY + ":" + positionZ + "}");
+                //Debug.Log("RealCord{" + xCoord + ":" + yCoord + ":" + zCoord + "}");
             }
         }
     }
