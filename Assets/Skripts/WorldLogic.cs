@@ -11,7 +11,7 @@ public class WorldLogic : MonoBehaviour
     public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse;
 
     private GameObject model3D;
-    private int modelID;
+    private byte modelID;
 
     private static int step = MapSizeEditor.step;
 
@@ -27,7 +27,7 @@ public class WorldLogic : MonoBehaviour
     private BoxCollider boxOfMinicube;
 
     GameObject[,,] TypeOfObjectOnMap;
-    int[,,] TypeOfObjectOnMapInt;
+    public static byte[,,] TypeOfObjectOnMapInt;
 
     float mouseScrollValue;
     float posX, posY, posZ;
@@ -40,7 +40,7 @@ public class WorldLogic : MonoBehaviour
     WorldLogic()
     {
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
-        TypeOfObjectOnMapInt = new int[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
+        TypeOfObjectOnMapInt = new byte[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
     
 
@@ -48,7 +48,7 @@ public class WorldLogic : MonoBehaviour
     {
         if (newMiniCube == null)
         {
-            modelID = num;
+            modelID = (byte)num;
             switch (num)
             {
                 case 1:
@@ -104,7 +104,7 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
-                    TypeOfObjectOnMapInt[x, y, z] = 0;
+                    TypeOfObjectOnMapInt[x, y, z] = 255;
                     #endregion
                     newMiniCube.tag = "ground";
                     //newMiniCube.isStatic = true;
@@ -145,7 +145,6 @@ public class WorldLogic : MonoBehaviour
 
                     #endregion
 
-                    //Instantiate(model3D, newMiniCube.transform);
                     Instantiate(model3D, newMiniCube.transform);
                     if(model3D == mine)
                     {
@@ -185,7 +184,7 @@ public class WorldLogic : MonoBehaviour
                                                 Debug.LogWarning("Нажал2");
                                                 Destroy(TypeOfObjectOnMap[xCoord, i - 1, zCoord]);
                                                 TypeOfObjectOnMap[xCoord, i - 1, zCoord] = null;
-                                                TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = -1;
+                                                TypeOfObjectOnMapInt[xCoord, i - 1, zCoord] = 0;
                                             }
                                         }
                                         if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
