@@ -104,7 +104,7 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
-                    TypeOfObjectOnMapInt[x, y, z] = 255;
+                    TypeOfObjectOnMapInt[x, y, z] = 9;
                     Debug.Log("M[" + x + ":" + y + ":" + z + "]" + TypeOfObjectOnMapInt[x, y, z]);
                     #endregion
                     newMiniCube.tag = "ground";
@@ -196,7 +196,6 @@ public class WorldLogic : MonoBehaviour
                                             {
                                                 if (TypeOfObjectOnMap[xCoord, i, zCoord].tag != "mine")
                                                 {
-                                                    // 
                                                     newMiniCube = new GameObject();
                                                     newMiniCube.transform.localScale = new Vector3(step, step, step);
                                                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
@@ -208,8 +207,6 @@ public class WorldLogic : MonoBehaviour
                                                     Instantiate(chainLink, newMiniCube.transform);
                                                     newMiniCube.tag = "chain";
                                                     TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
-                                                    TypeOfObjectOnMapInt[xCoord, i, zCoord] = 254;
-                                                    Debug.Log("M[" + xCoord + ":" + i + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, i, zCoord]);
                                                     newMiniCube = null;
                                                     break;
                                                 }
@@ -239,7 +236,7 @@ public class WorldLogic : MonoBehaviour
                                         Instantiate(chainLink, newMiniCube.transform);
                                         newMiniCube.tag = "chain";
                                         TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
-                                        TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 254;
+                                        TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 8;
                                         Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
 
                                     }
