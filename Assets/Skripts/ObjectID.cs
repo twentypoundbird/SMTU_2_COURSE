@@ -6,6 +6,7 @@ public class ObjectID : MonoBehaviour
 {
     [Range(0,3)]
     public byte MyTypeID = 0;
+    [HideInInspector]
     public bool DeleteObject = false;
 
     private bool WaitChange = false;
@@ -25,20 +26,15 @@ public class ObjectID : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (x != this.GetComponent<Transform>().position.x)
+        if (x != (byte)(this.GetComponent<Transform>().position.x / 10 + 0.1) || y != (byte)(this.GetComponent<Transform>().position.y / 10 + 0.1) || z != (byte)(this.GetComponent<Transform>().position.z / 10 + 0.1))
         {
-            if (y != this.GetComponent<Transform>().position.y)
-            {
-                if (z != this.GetComponent<Transform>().position.z)
-                {
-                    x = (byte)(this.GetComponent<Transform>().position.x / 10);
-                    y = (byte)(this.GetComponent<Transform>().position.y / 10);
-                    z = (byte)(this.GetComponent<Transform>().position.z / 10);
-                    WaitChange = true;
-                }
-            }
+            x = (byte)(this.GetComponent<Transform>().position.x / 10 + 0.1);
+            y = (byte)(this.GetComponent<Transform>().position.y / 10 + 0.1);
+            z = (byte)(this.GetComponent<Transform>().position.z / 10 + 0.1);
+            WaitChange = true;
         }
     }
+
     IEnumerator changeCoords()
     {
         while(!DeleteObject)
