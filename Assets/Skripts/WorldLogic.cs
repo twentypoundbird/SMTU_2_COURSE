@@ -29,6 +29,14 @@ public class WorldLogic : MonoBehaviour
     GameObject[,,] TypeOfObjectOnMap;
     public static byte[,,] TypeOfObjectOnMapInt;
 
+    private static byte MainX;
+    private static byte MainY;
+    private static byte MainZ;
+
+    private static byte EndX;
+    private static byte EndY;
+    private static byte EndZ;
+
     float mouseScrollValue;
     float posX, posY, posZ;
 
@@ -173,6 +181,26 @@ public class WorldLogic : MonoBehaviour
                                 newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                                 TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                 TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
+                                if (modelID == 1)
+                                {
+                                    if (!(MainX == 0 && MainY == 0 && MainZ == 0))
+                                    {
+                                        Destroy(TypeOfObjectOnMap[MainX, MainY, MainZ]);
+                                    }
+                                    MainX = (byte)xCoord;
+                                    MainY = (byte)yCoord;
+                                    MainZ = (byte)zCoord;
+                                }
+                                if (modelID == 3)
+                                {
+                                    if (!(EndX == 0 && EndY == 0 && EndZ == 0))
+                                    {
+                                        Destroy(TypeOfObjectOnMap[EndX, EndY, EndZ]);
+                                    }
+                                    EndX = (byte)xCoord;
+                                    EndY = (byte)yCoord;
+                                    EndZ = (byte)zCoord;
+                                }
                                 Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
 
                                 if (model3D == mine)
