@@ -29,6 +29,14 @@ public class WorldLogic : MonoBehaviour
     GameObject[,,] TypeOfObjectOnMap;
     public static byte[,,] TypeOfObjectOnMapInt;
 
+    private static byte MainX;
+    private static byte MainY;
+    private static byte MainZ;
+
+    private static byte EndX;
+    private static byte EndY;
+    private static byte EndZ;
+
     float mouseScrollValue;
     float posX, posY, posZ;
 
@@ -104,7 +112,8 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
-                    TypeOfObjectOnMapInt[x, y, z] = 255;
+                    TypeOfObjectOnMapInt[x, y, z] = 9;
+                    Debug.Log("M[" + x + ":" + y + ":" + z + "]" + TypeOfObjectOnMapInt[x, y, z]);
                     #endregion
                     newMiniCube.tag = "ground";
                     //newMiniCube.isStatic = true;
@@ -172,6 +181,27 @@ public class WorldLogic : MonoBehaviour
                                 newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                                 TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                 TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
+                                if (modelID == 1)
+                                {
+                                    if (!(MainX == 0 && MainY == 0 && MainZ == 0))
+                                    {
+                                        Destroy(TypeOfObjectOnMap[MainX, MainY, MainZ]);
+                                    }
+                                    MainX = (byte)xCoord;
+                                    MainY = (byte)yCoord;
+                                    MainZ = (byte)zCoord;
+                                }
+                                if (modelID == 3)
+                                {
+                                    if (!(EndX == 0 && EndY == 0 && EndZ == 0))
+                                    {
+                                        Destroy(TypeOfObjectOnMap[EndX, EndY, EndZ]);
+                                    }
+                                    EndX = (byte)xCoord;
+                                    EndY = (byte)yCoord;
+                                    EndZ = (byte)zCoord;
+                                }
+                                Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
 
                                 if (model3D == mine)
                                 {
@@ -185,6 +215,7 @@ public class WorldLogic : MonoBehaviour
                                                 Destroy(TypeOfObjectOnMap[xCoord, i - 1, zCoord]);
                                                 TypeOfObjectOnMap[xCoord, i - 1, zCoord] = null;
                                                 TypeOfObjectOnMapInt[xCoord, i - 1, zCoord] = 0;
+                                                Debug.Log("M[" + xCoord + ":" + (i-1) + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, i-1, zCoord]);
                                             }
                                         }
                                         if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
@@ -193,7 +224,6 @@ public class WorldLogic : MonoBehaviour
                                             {
                                                 if (TypeOfObjectOnMap[xCoord, i, zCoord].tag != "mine")
                                                 {
-                                                    // 
                                                     newMiniCube = new GameObject();
                                                     newMiniCube.transform.localScale = new Vector3(step, step, step);
                                                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
@@ -205,7 +235,6 @@ public class WorldLogic : MonoBehaviour
                                                     Instantiate(chainLink, newMiniCube.transform);
                                                     newMiniCube.tag = "chain";
                                                     TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
-                                                    TypeOfObjectOnMapInt[xCoord, i, zCoord] = modelID;
                                                     newMiniCube = null;
                                                     break;
                                                 }
@@ -213,7 +242,6 @@ public class WorldLogic : MonoBehaviour
                                                 {
                                                     Instantiate(fixOnTheGround, newMiniCube.transform);
                                                     TypeOfObjectOnMap[xCoord, i, zCoord] = newMiniCube;
-                                                    TypeOfObjectOnMapInt[xCoord, i, zCoord] = modelID;
                                                     newMiniCube = null;
                                                     break;
                                                 }
@@ -236,7 +264,8 @@ public class WorldLogic : MonoBehaviour
                                         Instantiate(chainLink, newMiniCube.transform);
                                         newMiniCube.tag = "chain";
                                         TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
-                                        TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
+                                        TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 8;
+                                        Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
 
                                     }
 
@@ -345,17 +374,22 @@ public class WorldLogic : MonoBehaviour
                     if (hit.collider.gameObject.tag != "chain")
                     {
                         Destroy(hit.collider.gameObject);
+                        TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), (int)(hit.collider.gameObject.transform.position.y / step + 0.1), (int)(hit.collider.gameObject.transform.position.z / step + 0.1)] = 0;
+                        Debug.Log("M[" + (int)(hit.collider.gameObject.transform.position.x / step + 0.1) + ":" + (int)(hit.collider.gameObject.transform.position.y / step + 0.1) + ":" + (int)(hit.collider.gameObject.transform.position.z / step + 0.1) + "]" + TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), (int)(hit.collider.gameObject.transform.position.y / step + 0.1), (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
                     }
                     if (hit.collider.gameObject.tag == "mine")
                     {
                         for (int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >= 0; i--)
                         {
-                            Debug.LogWarning((int)hit.collider.gameObject.transform.position.x / step);
+                            //Debug.LogWarning((int)hit.collider.gameObject.transform.position.x / step);
                             if (TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)].tag == "chain")
                             {
                                 Destroy(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
+                                TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)] = 0;
+                                Debug.Log("M[" + (int)(hit.collider.gameObject.transform.position.x / step + 0.1) + ":" + i + ":" + (int)(hit.collider.gameObject.transform.position.z / step + 0.1) + "]" + TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
                             }
                         }
+
                     }
                 }
             }
