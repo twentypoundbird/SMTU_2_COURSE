@@ -47,7 +47,7 @@ public class GameWorldLogic : MonoBehaviour
                 {
                     if (byte.TryParse(sepLine[count++].ToString(), out outValue))
                     {
-                        Debug.Log("M[" + x + ":" + y + ":" + z + "] = " + outValue);
+                        //Debug.Log("M[" + x + ":" + y + ":" + z + "] = " + outValue);
                         TypeOfObjectOnMapInt[x, y, z] = outValue;
                         CreateObjectType(x, y, z, outValue);
                     }
