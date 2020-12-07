@@ -6,7 +6,7 @@ using UnityEngine;
 public class MoveLogic : MonoBehaviour
 {
     //[SerializeField]
-    public byte[] MoveList;
+    private byte[] MoveList;
     public bool MoveStart = false;
     private bool PlayerIsMoving = false;
     private float speed = 0;
@@ -57,16 +57,30 @@ public class MoveLogic : MonoBehaviour
             if (movetype == (byte)Movementtype.onX) { mainXYZ = this.transform.position.x; targetXYZ = targetPoint.x; startXYZ = startPoint.x; }
             else if (movetype == (byte)Movementtype.onY) { mainXYZ = this.transform.position.y; targetXYZ = targetPoint.y; startXYZ = startPoint.y; }
             else if (movetype == (byte)Movementtype.onZ) { mainXYZ = this.transform.position.z; targetXYZ = targetPoint.z; startXYZ = startPoint.z; }
-            
-            speed = Mathf.Abs((targetXYZ - mainXYZ) / 5) + 0.06f;
-            if (speed >= 1)
+
+            float x = Mathf.Abs(startXYZ - mainXYZ);
+            if(x < 5)
             {
-                speed = Mathf.Abs((startXYZ - mainXYZ) / 5) + 0.06f;
-                if (speed >= 1) speed = 1;
+                x = (-x + 10) * (0.01f * x);
+                speed = x;
             }
-            else if (targetXYZ == mainXYZ) PlayerIsMoving = false;
+            else
+            {
+                x = Mathf.Abs(targetXYZ - mainXYZ);
+                if(x<5)
+                {
+                    x = (-x + 10) * (0.01f * x);
+                    speed = x;
+                }
+            }
+            if (speed < 0.004f)
+            {
+                speed = 0.004f;
+            }
             
-            this.transform.position = Vector3.MoveTowards(transform.position, targetPoint, speed/8);
+            if (targetXYZ == mainXYZ) PlayerIsMoving = false;
+
+            this.transform.position = Vector3.MoveTowards(transform.position, targetPoint, (speed + 0.01f));
             Debug.Log("Speed = " + speed + ";");
         }
     }
@@ -80,10 +94,12 @@ public class MoveLogic : MonoBehaviour
         for (int i = 0; i < MoveList.Length; i += j)
         {
             yield return new WaitUntil(() => !PlayerIsMoving);
+            yield return new WaitForSeconds(0.5f);
             startPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
 
             for (j = 1; j+i < MoveList.Length; j++) if(MoveList[i + j] != MoveList[i]) break;
-            
+            speed = 0.1f;
+
             switch (MoveList[i])
             {
                 case 0: // FORWARD
