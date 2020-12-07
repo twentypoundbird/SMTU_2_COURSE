@@ -98,48 +98,48 @@ public class ControlPanel : MonoBehaviour
     }
     public void IsTappedForward()
     {
-        Instantiate(forwardLabel,content);
         forwardLabel.GetComponent<Image>().color = standartColor;
+        Instantiate(forwardLabel,content);
         equalLastInStack(moveTapped, true);
         equalLastInStack(conditionParamTapped, false);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedBack()
     {
-        Instantiate(backLabel, content);
         backLabel.GetComponent<Image>().color = standartColor;
+        Instantiate(backLabel, content);
         equalLastInStack(moveTapped, true);
         equalLastInStack(conditionParamTapped, false);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedTurnLeft()
     {
-        Instantiate(turnToLeftLabel, content);
         turnToLeftLabel.GetComponent<Image>().color = standartColor;
+        Instantiate(turnToLeftLabel, content);
         equalLastInStack(moveTapped, true);
         equalLastInStack(conditionParamTapped, false);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedTurnRight()
     {
-        Instantiate(turnToRightLabel, content);
         turnToRightLabel.GetComponent<Image>().color = standartColor;
+        Instantiate(turnToRightLabel, content);
         equalLastInStack(moveTapped, true);
         equalLastInStack(conditionParamTapped, false);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedUp()
     {
-        Instantiate(upLabel, content);
         upLabel.GetComponent<Image>().color = standartColor;
+        Instantiate(upLabel, content);
         equalLastInStack(moveTapped, true);
         equalLastInStack(conditionParamTapped, false);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedDown()
     {
-        Instantiate(downLabel, content);
         downLabel.GetComponent<Image>().color = standartColor;
+        Instantiate(downLabel, content);
         equalLastInStack(moveTapped, true);
         equalLastInStack(conditionParamTapped, false);
         equalLastInStack(logicOperatorTapped, false);
@@ -240,40 +240,40 @@ public class ControlPanel : MonoBehaviour
     }
     public void IsTappedClear()
     {
-        Instantiate(clearLabel, content);
         clearLabel.GetComponent<Image>().color = conditionColor;
+        Instantiate(clearLabel, content);
 
         equalLastInStack(conditionParamTapped,true);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedNotClear()
     {
-        Instantiate(notClearLabel, content);
         notClearLabel.GetComponent<Image>().color = conditionColor;
+        Instantiate(notClearLabel, content);
 
         equalLastInStack(conditionParamTapped, true);
         equalLastInStack(logicOperatorTapped, false);
     }
     public void IsTappedAnd()
     {
-        Instantiate(andLabel, content);
         andLabel.GetComponent<Image>().color = operatorColor;
+        Instantiate(andLabel, content);
         equalLastInStack(logicOperatorTapped, true);
         equalLastInStack(moveTapped, false);
         equalLastInStack(conditionParamTapped, false);
     }
     public void IsTappedOr()
     {
-        Instantiate(orLabel, content);
         orLabel.GetComponent<Image>().color = operatorColor;
+        Instantiate(orLabel, content);
         equalLastInStack(logicOperatorTapped, true);
         equalLastInStack(moveTapped, false);
         equalLastInStack(conditionParamTapped, false);
     }
     public void IsTappedTo()
     {
-        Instantiate(toLabel, content);
         toLabel.GetComponent<Image>().color = ifColor;
+        Instantiate(toLabel, content);
         equalLastInStack(exitFromParam, true);
     }
     public void IsTappedIf()
@@ -281,14 +281,14 @@ public class ControlPanel : MonoBehaviour
         equalLastInStack(moveTapped, false);
         allStacksPosition(false);
         equalLastInStack(ifCondition, true);
-        Instantiate(ifLabel, content);
         ifLabel.GetComponent<Image>().color = ifColor;
+        Instantiate(ifLabel, content);
         StartCoroutine(IfCondition(numberOfIf));
     }
     public void IsTappedEndCondition()
     {
-        Instantiate(endOfConditionLabel, content);
         endOfConditionLabel.GetComponent<Image>().color = ifColor;
+        Instantiate(endOfConditionLabel, content);
         equalLastInStack(isEndCondition, true);
     }
 
