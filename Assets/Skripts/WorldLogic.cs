@@ -38,7 +38,6 @@ public class WorldLogic : MonoBehaviour
     private static byte EndZ;
 
     float mouseScrollValue;
-    float posX, posY, posZ;
 
     private float positionX, positionY, positionZ, differenceX, differenceY, differenceZ;
     int xCoord, yCoord, zCoord;
@@ -92,13 +91,13 @@ public class WorldLogic : MonoBehaviour
         
         for(int x = 0; x < MapSizeEditor.countX; x++)
         {
-            for (int y = 0; /*y < MapSizeEditor.sizeY / step*/ y<1; y++)
+            for (int y = 0; y<1; y++)
             {
                 for (int z = 0; z < MapSizeEditor.countZ; z++)
                 {
-                    xCoord = (int)(step * (x/* - MapSizeEditor.countX / 2 + 0.5*/));
-                    yCoord = (int)(step * (y/* - MapSizeEditor.countY / 2 + 0.5*/));
-                    zCoord = (int)(step * (z/* - MapSizeEditor.countZ / 2 + 0.5*/));
+                    xCoord = (int)(step * (x));
+                    yCoord = (int)(step * (y));
+                    zCoord = (int)(step * (z));
                     newMiniCube = new GameObject();
                     newMiniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
                     newMiniCube.transform.localScale = new Vector3(step, step, step);
