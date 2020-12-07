@@ -185,6 +185,7 @@ public class WorldLogic : MonoBehaviour
                                     if (!(MainX == 0 && MainY == 0 && MainZ == 0))
                                     {
                                         Destroy(TypeOfObjectOnMap[MainX, MainY, MainZ]);
+                                        TypeOfObjectOnMapInt[MainX, MainY, MainZ] = 0;
                                     }
                                     MainX = (byte)xCoord;
                                     MainY = (byte)yCoord;
@@ -195,6 +196,7 @@ public class WorldLogic : MonoBehaviour
                                     if (!(EndX == 0 && EndY == 0 && EndZ == 0))
                                     {
                                         Destroy(TypeOfObjectOnMap[EndX, EndY, EndZ]);
+                                        TypeOfObjectOnMapInt[EndX, EndY, EndZ] = 0;
                                     }
                                     EndX = (byte)xCoord;
                                     EndY = (byte)yCoord;

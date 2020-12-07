@@ -22,12 +22,16 @@ public class GameWorldLogic : MonoBehaviour
     public static Material materialForMiniCube;
 
     private GameObject newMiniCube;
+    private GameObject landscape;
 
     public byte[,,] TypeOfObjectOnMapInt;
 
 
     private void Start()
     {
+        landscape = new GameObject();
+        landscape.name = "Landscape";
+        landscape.transform.parent = transform;
         string nameOfSaveFile = "/test.txt", nameDirectiry = "/testDir";
         string[] readedLines = File.ReadAllLines(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile); // чтение файла
         string sepLine = readedLines[0];
@@ -47,7 +51,7 @@ public class GameWorldLogic : MonoBehaviour
                 {
                     if (byte.TryParse(sepLine[count++].ToString(), out outValue))
                     {
-                        Debug.Log("M[" + x + ":" + y + ":" + z + "] = " + outValue);
+                        //Debug.Log("M[" + x + ":" + y + ":" + z + "] = " + outValue);
                         TypeOfObjectOnMapInt[x, y, z] = outValue;
                         CreateObjectType(x, y, z, outValue);
                     }
@@ -64,13 +68,14 @@ public class GameWorldLogic : MonoBehaviour
             newMiniCube.transform.localScale = new Vector3(step, step, step);
             newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
             newMiniCube.transform.position = new Vector3(x * step, y * step, z * step);
-            newMiniCube.transform.parent = transform;
             newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
-            switch(type)
+            if(type != 9) newMiniCube.transform.parent = transform;
+            switch (type)
             {
                 case 1:
                     Instantiate(submarine, newMiniCube.transform);
                     newMiniCube.AddComponent<MoveLogic>();
+                    newMiniCube.name = "MainPodLODKA";
                     break;
                 case 2:
                     Instantiate(mine, newMiniCube.transform);
@@ -78,9 +83,11 @@ public class GameWorldLogic : MonoBehaviour
                     {
                         Instantiate(fixOnTheGround, newMiniCube.transform);
                     }
+                    newMiniCube.name = "Bomb";
                     break;
                 case 3:
                     Instantiate(lighthouse, newMiniCube.transform);
+                    newMiniCube.name = "LightHouse";
                     break;
                 case 8:
                     Instantiate(chainLink, newMiniCube.transform);
@@ -91,9 +98,12 @@ public class GameWorldLogic : MonoBehaviour
                             Instantiate(fixOnTheGround, newMiniCube.transform);
                         }
                     }
+                    newMiniCube.name = "Chain";
                     break;
                 case 9:
                     newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
+                    newMiniCube.name = "Box["+x+":"+y+":"+z+"]";
+                    newMiniCube.transform.parent = landscape.transform;
                     break;
                 default:
                     break;
