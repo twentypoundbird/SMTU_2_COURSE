@@ -70,6 +70,7 @@ public class GameWorldLogic : MonoBehaviour
             {
                 case 1:
                     Instantiate(submarine, newMiniCube.transform);
+                    newMiniCube.AddComponent<MoveLogic>();
                     break;
                 case 2:
                     Instantiate(mine, newMiniCube.transform);
