@@ -88,56 +88,63 @@ public class MoveLogic : MonoBehaviour
     {
         startPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
         targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
-        yield return new WaitUntil(() => MoveStart);
-        MoveStart = false;
-        int j; // сколько элементов пропущено за 1 цикл
-        for (int i = 0; i < MoveList.Length; i += j)
+        while(true)
         {
-            yield return new WaitUntil(() => !PlayerIsMoving);
-            yield return new WaitForSeconds(0.5f);
-            startPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
-
-            for (j = 1; j+i < MoveList.Length; j++) if(MoveList[i + j] != MoveList[i]) break;
-            speed = 0.1f;
-
-            switch (MoveList[i])
+            MoveStart = false;
+            yield return new WaitUntil(() => MoveStart);
+            MoveStart = false;
+            int j; // сколько элементов пропущено за 1 цикл
+            for (int i = 0; i < MoveList.Length; i += j)
             {
-                case 0: // FORWARD
-                    movetype = (byte)Movementtype.onX;
-                    targetPoint = new Vector3((int)(this.transform.position.x + 0.1 + 10 * j), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
-                    break;
-                case 1: // BACK
-                    movetype = (byte)Movementtype.onX;
-                    targetPoint = new Vector3((int)(this.transform.position.x + 0.1 - 10 * j), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
-                    break;
-                case 2: // LEFT
-                    movetype = (byte)Movementtype.onZ;
-                    targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1 - 10 * j));
-                    break;
-                case 3: // RIGHT
-                    movetype = (byte)Movementtype.onZ;
-                    targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1 + 10 * j));
-                    break;
-                case 4: // UP
-                    movetype = (byte)Movementtype.onY;
-                    targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1 + 10 * j), (int)(this.transform.position.z + 0.1));
-                    break;
-                case 5: // DOWN
-                    movetype = (byte)Movementtype.onY;
-                    targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1 - 10 * j), (int)(this.transform.position.z + 0.1));
-                    break;
-                default:
-                    j = 1;
-                    break;
+                yield return new WaitUntil(() => !PlayerIsMoving);
+                yield return new WaitForSeconds(0.42f);
+                startPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
+
+                for (j = 1; j+i < MoveList.Length; j++) if(MoveList[i + j] != MoveList[i]) break;
+                speed = 0.1f;
+
+                switch (MoveList[i])
+                {
+                    case 0: // FORWARD
+                        movetype = (byte)Movementtype.onX;
+                        targetPoint = new Vector3((int)(this.transform.position.x + 0.1 + 10 * j), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
+                        break;
+                    case 1: // BACK
+                        movetype = (byte)Movementtype.onX;
+                        targetPoint = new Vector3((int)(this.transform.position.x + 0.1 - 10 * j), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1));
+                        break;
+                    case 2: // LEFT
+                        movetype = (byte)Movementtype.onZ;
+                        targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1 - 10 * j));
+                        break;
+                    case 3: // RIGHT
+                        movetype = (byte)Movementtype.onZ;
+                        targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1), (int)(this.transform.position.z + 0.1 + 10 * j));
+                        break;
+                    case 4: // UP
+                        movetype = (byte)Movementtype.onY;
+                        targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1 + 10 * j), (int)(this.transform.position.z + 0.1));
+                        break;
+                    case 5: // DOWN
+                        movetype = (byte)Movementtype.onY;
+                        targetPoint = new Vector3((int)(this.transform.position.x + 0.1), (int)(this.transform.position.y + 0.1 - 10 * j), (int)(this.transform.position.z + 0.1));
+                        break;
+                    default:
+                        j = 1;
+                        break;
+                }
+                PlayerIsMoving = true;
             }
-            PlayerIsMoving = true;
-            //Debug.Log("MoveList[" + i + "] = " + MoveList[i]);
         }
     }
     IEnumerator DELETE_StartInsert()
     {
-        yield return new WaitUntil(() => DELETE_InsertLogicMove);
-        InsertLogicMove(DELETE_text);
+        while(true)
+        {
+            DELETE_InsertLogicMove = false;
+            yield return new WaitUntil(() => DELETE_InsertLogicMove);
+            InsertLogicMove(DELETE_text);
+        }
     }
 
 }
