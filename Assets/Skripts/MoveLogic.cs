@@ -73,6 +73,7 @@ public class MoveLogic : MonoBehaviour
     public static IEnumerator MoveObject(GameObject @object, string direction, int timeOfAnimation, int smoothCoeficient)
     {
         Vector3 target = new Vector3();
+        int rotationAngle;
         switch (direction)
         {
             case "Forward":
@@ -108,7 +109,15 @@ public class MoveLogic : MonoBehaviour
                 }
                 break;
             case "Turn left":
-                @object.transform.Rotate(0, -90, 0);
+                rotationAngle = -90 + (int)@object.transform.rotation.eulerAngles.y;
+                Debug.LogWarning("rotationAngle = " + rotationAngle);
+                while (((int)@object.transform.eulerAngles.y - rotationAngle)%360 != 0)
+                {
+                    @object.transform.Rotate(0, -90f / smoothCoeficient, 0);
+                    Debug.LogWarning("rotation.y = " + @object.transform.eulerAngles.y);
+                    yield return new WaitForSeconds(timeOfAnimation / smoothCoeficient);
+                }
+                @object.transform.rotation = Quaternion.Euler(@object.transform.eulerAngles.x, rotationAngle, @object.transform.eulerAngles.z);
                 target = @object.transform.position + @object.transform.forward * MapSizeEditor.step;
                 while (@object.transform.position != target)
                 {
@@ -117,7 +126,15 @@ public class MoveLogic : MonoBehaviour
                 }
                 break;
             case "Turn right":
-                @object.transform.Rotate(0, 90, 0);
+                rotationAngle = 90 + (int)@object.transform.rotation.eulerAngles.y;
+                Debug.LogWarning("rotationAngle = " + rotationAngle);
+                while (((int)@object.transform.eulerAngles.y - rotationAngle) % 360 != 0)
+                {
+                    @object.transform.Rotate(0, 90f / smoothCoeficient, 0);
+                    Debug.LogWarning("rotation.y = " + @object.transform.eulerAngles.y);
+                    yield return new WaitForSeconds(timeOfAnimation / smoothCoeficient);
+                }
+                @object.transform.rotation = Quaternion.Euler(@object.transform.eulerAngles.x, rotationAngle, @object.transform.eulerAngles.z);
                 target = @object.transform.position + @object.transform.forward * MapSizeEditor.step;
                 while (@object.transform.position != target)
                 {
