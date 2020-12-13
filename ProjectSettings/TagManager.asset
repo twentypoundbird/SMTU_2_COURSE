@@ -8,6 +8,7 @@ TagManager:
   - mine
   - chain
   - ground
+  - MoveLabel
   layers:
   - Default
   - TransparentFX

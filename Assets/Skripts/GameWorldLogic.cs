@@ -24,11 +24,12 @@ public class GameWorldLogic : MonoBehaviour
     private GameObject newMiniCube;
     private GameObject landscape;
 
-    public byte[,,] TypeOfObjectOnMapInt;
+    public static byte[,,] TypeOfObjectOnMapInt;
 
 
     private void Start()
     {
+
         landscape = new GameObject();
         landscape.name = "Landscape";
         landscape.transform.parent = transform;
@@ -76,6 +77,8 @@ public class GameWorldLogic : MonoBehaviour
                     Instantiate(submarine, newMiniCube.transform);
                     newMiniCube.AddComponent<MoveLogic>();
                     newMiniCube.name = "MainPodLODKA";
+                    Debug.LogWarning(x + " " + y + " " + z);
+                    CommandReader.submarine = newMiniCube;
                     break;
                 case 2:
                     Instantiate(mine, newMiniCube.transform);

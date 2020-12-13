@@ -40,6 +40,35 @@ public class MoveLogic : MonoBehaviour
         }
     }
 
+
+    public static void MoveObject(GameObject @object, string directoin)
+    {
+         
+        switch (directoin)
+        {
+            case "Forward":
+                @object.transform.position += @object.transform.forward * MapSizeEditor.step; 
+                break;
+            case "Back":
+                @object.transform.position += @object.transform.forward * -MapSizeEditor.step;
+                break;
+            case "Up":
+                @object.transform.position += @object.transform.up * MapSizeEditor.step;
+                break;
+            case "Down":
+                @object.transform.position += @object.transform.up * -MapSizeEditor.step;
+                break;
+            case "Turn left":
+                @object.transform.Rotate(0, -90, 0);
+                @object.transform.position += @object.transform.forward * MapSizeEditor.step;
+                break;
+            case "Turn right":
+                @object.transform.Rotate(0, 90, 0);
+                @object.transform.position += @object.transform.forward * MapSizeEditor.step;
+                break;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
