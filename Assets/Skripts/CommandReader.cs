@@ -348,24 +348,29 @@ public class CommandReader : MonoBehaviour
 
     public void StartSwimming()
     {
+        StartCoroutine(Swimming());
+    }
+
+    IEnumerator Swimming()
+    {
         isConditionsDone.Push(true);
         int step = 0;
-        while(step < content.transform.childCount)
+        while (step < content.transform.childCount)
         {
             if (content.transform.GetChild(step).tag == "MoveLabel" && isConditionsDone.Peek() && !isCondition)
             {
-                MoveLogic.MoveObject(submarine, content.transform.GetChild(step).GetComponentInChildren<Text>().text);
+                yield return StartCoroutine(MoveLogic.MoveObject(submarine, content.transform.GetChild(step).GetComponentInChildren<Text>().text, 1, 20));
             }
-            if(content.transform.GetChild(step).GetComponentInChildren<Text>().text == "If")
+            if (content.transform.GetChild(step).GetComponentInChildren<Text>().text == "If")
             {
                 isConditionsDone.Push(true);
                 isCondition = true;
             }
             if (isCondition && content.transform.GetChild(step).GetComponentInChildren<Text>().text != "If")
             {
-                if(content.transform.GetChild(step).GetComponentInChildren<Text>().text == "&&" || content.transform.GetChild(step).GetComponentInChildren<Text>().text == "||")
+                if (content.transform.GetChild(step).GetComponentInChildren<Text>().text == "&&" || content.transform.GetChild(step).GetComponentInChildren<Text>().text == "||")
                 {
-                    if(content.transform.GetChild(step).GetComponentInChildren<Text>().text == "&&" && isConditionsDone.Peek())
+                    if (content.transform.GetChild(step).GetComponentInChildren<Text>().text == "&&" && isConditionsDone.Peek())
                     {
                         StackRerfreasher<bool>(isConditionsDone, true);
                     }
@@ -374,11 +379,11 @@ public class CommandReader : MonoBehaviour
                         StackRerfreasher<bool>(isConditionsDone, true);
                     }
                 }
-                else if(content.transform.GetChild(step).GetComponentInChildren<Text>().text == "To")
+                else if (content.transform.GetChild(step).GetComponentInChildren<Text>().text == "To")
                 {
                     isCondition = false;
                 }
-                else if(content.transform.GetChild(step + 1).GetComponentInChildren<Text>().text == "Clear" || content.transform.GetChild(step + 1).GetComponentInChildren<Text>().text == "Not clear")
+                else if (content.transform.GetChild(step + 1).GetComponentInChildren<Text>().text == "Clear" || content.transform.GetChild(step + 1).GetComponentInChildren<Text>().text == "Not clear")
                 {
                     if (isConditionsDone.Peek())
                     {
@@ -387,7 +392,7 @@ public class CommandReader : MonoBehaviour
                     }
                 }
             }
-            if(isCondition && content.transform.GetChild(step).GetComponentInChildren<Text>().text == "End")
+            if (isCondition && content.transform.GetChild(step).GetComponentInChildren<Text>().text == "End")
             {
                 isConditionsDone.Pop();
             }
@@ -395,9 +400,18 @@ public class CommandReader : MonoBehaviour
 
             step++;
         }
+        yield return 0;
 
+    }
 
-
+    IEnumerator MoveAnimation(GameObject @object,string direction)
+    {
+        int finishAnim = 0; 
+        while (finishAnim++ != MoveLogic.speed)
+        {
+            MoveLogic.MoveObject(@object, direction);
+            yield return new WaitForSeconds(0.01f);
+        }
     }
     
 }
