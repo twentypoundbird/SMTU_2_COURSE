@@ -118,12 +118,7 @@ public class MoveLogic : MonoBehaviour
                     yield return new WaitForSeconds(timeOfAnimation / smoothCoeficient);
                 }
                 @object.transform.rotation = Quaternion.Euler(@object.transform.eulerAngles.x, rotationAngle, @object.transform.eulerAngles.z);
-                target = @object.transform.position + @object.transform.forward * MapSizeEditor.step;
-                while (@object.transform.position != target)
-                {
-                    @object.transform.position += @object.transform.forward * MapSizeEditor.step / smoothCoeficient;
-                    yield return new WaitForSeconds(timeOfAnimation / smoothCoeficient);
-                }
+                
                 break;
             case "Turn right":
                 rotationAngle = 90 + (int)@object.transform.rotation.eulerAngles.y;
@@ -135,12 +130,7 @@ public class MoveLogic : MonoBehaviour
                     yield return new WaitForSeconds(timeOfAnimation / smoothCoeficient);
                 }
                 @object.transform.rotation = Quaternion.Euler(@object.transform.eulerAngles.x, rotationAngle, @object.transform.eulerAngles.z);
-                target = @object.transform.position + @object.transform.forward * MapSizeEditor.step;
-                while (@object.transform.position != target)
-                {
-                    @object.transform.position += @object.transform.forward * MapSizeEditor.step / smoothCoeficient;
-                    yield return new WaitForSeconds(timeOfAnimation / smoothCoeficient);
-                }
+                
                 break;
         }
         
