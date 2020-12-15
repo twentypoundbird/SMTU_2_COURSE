@@ -75,7 +75,7 @@ public class CommandReader : MonoBehaviour
         {
             if (content.transform.GetChild(step).tag == "MoveLabel" && isConditionsDone.Peek() && !isCondition)
             {
-                yield return StartCoroutine(MoveLogic.MoveObject(submarine, content.transform.GetChild(step).GetComponentInChildren<Text>().text, 1, 20));
+                yield return MoveLogic.MoveObject(submarine, content.transform.GetChild(step).GetComponentInChildren<Text>().text, 1, 20);
             }
             if (content.transform.GetChild(step).GetComponentInChildren<Text>().text == "If")
             {
