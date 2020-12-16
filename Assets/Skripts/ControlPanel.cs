@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ControlPanel : MonoBehaviour
 {
+    //делаем ссылки на префабы блоков команд
     [Header("Labels")]
     public GameObject forwardLabel;
     public GameObject backLabel;
@@ -20,18 +21,19 @@ public class ControlPanel : MonoBehaviour
     public GameObject toLabel;
     public GameObject endOfConditionLabel;
 
+    //ссылки на цвета блоков
     [Header("Colors")]
     public Color standartColor;
     public Color ifColor;
     public Color conditionColor;
     public Color operatorColor;
 
-
+    //ссылки на пространства, внутри которых будут меняться координаты объектов (родитель блоков - content, родитель кнопок - buttonContent)
     [Header("Transforms")]
     public Transform content;
     public Transform buttonContent;
 
-
+    //создаем булевые стэки, отвечающие за нажатие тех или иных команд на данном уровне
     Stack <bool> moveTapped = new Stack<bool>(),
         ifCondition = new Stack<bool>(),
         conditionParamTapped = new Stack<bool>(),
@@ -39,13 +41,15 @@ public class ControlPanel : MonoBehaviour
         logicOperatorTapped = new Stack<bool>(),
         isEndCondition = new Stack<bool>();
 
-
+    //переменные, отвечающие за индекс позиций определенных кнопок в столбце команд
     private int clearIndex = 7, notClearIndex = 8,
         andIndex = 9, orIndex = 10, toIndex = 11,
         endIndex = 12;
 
+    //кол-во условных операторов if
     private int numberOfIf = 0;
 
+    //метод удаления последних эллементов в стэках
     private void ConditionDelete()
     {
         ifCondition.Pop();
@@ -55,11 +59,15 @@ public class ControlPanel : MonoBehaviour
         logicOperatorTapped.Pop();
         isEndCondition.Pop();
     }
+
+    //метод замены последнего эл-та стэка
     private void equalLastInStack(Stack<bool> stack, bool newBool)
     {
         stack.Pop();
         stack.Push(newBool);
     }
+
+    //метод, котрый либо полностью очищает стэки, либо пушит в стэки значение false
     private void allStacksPosition(bool delete)
     {
         if (delete)
@@ -81,10 +89,12 @@ public class ControlPanel : MonoBehaviour
             isEndCondition.Push(false);
         }
     }
+
+    //метод Start вызывается перед первым фреймом на сцене
     private void Start()
     {
         allStacksPosition(false);
-        for (int i = 0; i < buttonContent.childCount; i++)
+        for (int i = 0; i < buttonContent.childCount; i++) //делаем активными нужные нам кнопки
         {
             if (i < clearIndex)
             {
@@ -96,6 +106,8 @@ public class ControlPanel : MonoBehaviour
             }
         }
     }
+
+    
     public void IsTappedForward()
     {
         forwardLabel.GetComponent<Image>().color = standartColor;
