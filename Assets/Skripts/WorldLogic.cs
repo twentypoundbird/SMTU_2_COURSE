@@ -8,47 +8,44 @@ using System;
 
 public class WorldLogic : MonoBehaviour
 {
-    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse;
+    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse; // 3d модели
 
-    private GameObject model3D;
-    private byte modelID;
-
-    private static int step = MapSizeEditor.step;
-
-    public Camera camera;
-
-    public Material generalMaterial, invisibleMaterial,
-        sandMaterial;
+    // Материалы для 3d моделей
+    public Material generalMaterial, invisibleMaterial, sandMaterial;
     public Mesh generalMesh;
-
     public static Material materialForMiniCube;
 
-    private GameObject newMiniCube;
-    private BoxCollider boxOfMinicube;
+    private GameObject model3D; // используемая в данный момент 3d модель
+    private byte modelID; // индификационный номер(далее ID) используемой 3d модели
 
-    GameObject[,,] TypeOfObjectOnMap;
-    public static byte[,,] TypeOfObjectOnMapInt;
+    private static int step = MapSizeEditor.step; // step - размер одной клетки. Пр. 1 кл = 10 у.е
 
-    private static byte MainX;
-    private static byte MainY;
-    private static byte MainZ;
+    public Camera camera; // камера на сцене, через которую смотрит игрок. Нужна для использования Raycast
 
-    private static byte EndX;
-    private static byte EndY;
-    private static byte EndZ;
+    private GameObject newMiniCube; // временный объект, созданный игроком при нажатии на экран
 
-    float mouseScrollValue;
+    GameObject[,,] TypeOfObjectOnMap; // массив с объектами для удобного удаления их с сцены
+    public static byte[,,] TypeOfObjectOnMapInt; // массив с ID объектов
 
-    private float positionX, positionY, positionZ, differenceX, differenceY, differenceZ;
+    private byte MainX,MainY,MainZ; // Координаты главной лодки
+    private byte EndX,EndY,EndZ; // Координаты конечного пункта пути
+
+    private float mouseScrollValue; // для редактирования высоты с помощью колёсика мышки
+
+    // Временные переменные, чтобы не создавать их каждый frame
+    private float positionX, positionY, positionZ;
+    private float differenceX, differenceY, differenceZ;
     int xCoord, yCoord, zCoord;
     int tempxCoord = 0, tempzCoord = 0;
+
     bool Boolfas, deleteMode;
     WorldLogic()
     {
+        // инициализируем массивы с размерами, указанными пользователем
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
         TypeOfObjectOnMapInt = new byte[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
-    public void IsTapped(int num)
+    public void IsTapped(int num) // вызывается при нажатии на панель (рис.1)
     {
         if (newMiniCube == null)
         {
@@ -73,6 +70,10 @@ public class WorldLogic : MonoBehaviour
                     break;
                 case 7:
                     deleteMode = true;
+                    break;
+                case 9:
+                    model3D = null;
+                    deleteMode = false;
                     break;
                 default:
                     deleteMode = false;
@@ -128,22 +129,17 @@ public class WorldLogic : MonoBehaviour
         {
             if (newMiniCube == null)
             {
-                if (model3D != null)
+                if (model3D != null || modelID == 9)
                 {
                     newMiniCube = new GameObject();
                     newMiniCube.transform.localScale = new Vector3(step + 2, step + 2 , step + 2);
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
                     newMiniCube.AddComponent<ObjectID>();
-                    Instantiate(model3D, newMiniCube.transform);
-                    if(model3D == mine)
-                    {
-                        newMiniCube.tag = "mine";
-                    }
 
-                }
-                else
-                {
-                    Debug.Log("нет модели");
+                    if (modelID == 9) newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
+                    else Instantiate(model3D, newMiniCube.transform);
+                
+                    if (model3D == mine) newMiniCube.tag = "mine";
                 }
             }
             else
@@ -161,6 +157,7 @@ public class WorldLogic : MonoBehaviour
                                 newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                                 TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                 TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
+
                                 if (modelID == 1)
                                 {
                                     if (!(MainX == 0 && MainY == 0 && MainZ == 0))
@@ -168,20 +165,16 @@ public class WorldLogic : MonoBehaviour
                                         Destroy(TypeOfObjectOnMap[MainX, MainY, MainZ]);
                                         TypeOfObjectOnMapInt[MainX, MainY, MainZ] = 0;
                                     }
-                                    MainX = (byte)xCoord;
-                                    MainY = (byte)yCoord;
-                                    MainZ = (byte)zCoord;
+                                    MainX = (byte)xCoord; MainY = (byte)yCoord; MainZ = (byte)zCoord;
                                 }
-                                if (modelID == 3)
+                                else if (modelID == 3)
                                 {
                                     if (!(EndX == 0 && EndY == 0 && EndZ == 0))
                                     {
                                         Destroy(TypeOfObjectOnMap[EndX, EndY, EndZ]);
                                         TypeOfObjectOnMapInt[EndX, EndY, EndZ] = 0;
                                     }
-                                    EndX = (byte)xCoord;
-                                    EndY = (byte)yCoord;
-                                    EndZ = (byte)zCoord;
+                                    EndX = (byte)xCoord; EndY = (byte)yCoord; EndZ = (byte)zCoord;
                                 }
                                 if (model3D == mine)
                                 {
@@ -191,11 +184,9 @@ public class WorldLogic : MonoBehaviour
                                         {
                                             if (TypeOfObjectOnMap[xCoord, i - 1, zCoord].tag == "mine")
                                             {
-                                                Debug.LogWarning("Нажал2");
                                                 Destroy(TypeOfObjectOnMap[xCoord, i - 1, zCoord]);
                                                 TypeOfObjectOnMap[xCoord, i - 1, zCoord] = null;
                                                 TypeOfObjectOnMapInt[xCoord, i - 1, zCoord] = 0;
-                                                Debug.Log("M[" + xCoord + ":" + (i-1) + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, i-1, zCoord]);
                                             }
                                         }
                                         if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
@@ -244,15 +235,10 @@ public class WorldLogic : MonoBehaviour
                                         newMiniCube.tag = "chain";
                                         TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                         TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 8;
-                                        Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
                                     }
                                 }
                                 newMiniCube = null;
                                 mouseScrollValue = 0;
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Место занято другим объектом!");
                             }
                         }
                     }
@@ -261,18 +247,18 @@ public class WorldLogic : MonoBehaviour
         }
         if (newMiniCube != null)
         {
-            if (Mathf.Abs(Input.mouseScrollDelta.y) > 0)
-            {
-                mouseScrollValue += Input.mouseScrollDelta.y;
-            }
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            if (Mathf.Abs(Input.mouseScrollDelta.y) > 0) mouseScrollValue += Input.mouseScrollDelta.y; // смена высоты колёсиком мышки
+            
+            Ray ray = camera.ScreenPointToRay(Input.mousePosition); // используем Raycast для определения местоположения мышки на 3d пространстве
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 1000 * step))
             {
+                // получаем координаты, куда попал луч и переводим их в удобный для нас вид
                 differenceX = Mathf.Abs(hit.point.x - hit.collider.gameObject.transform.position.x) < step / 2 - 0.0001f ? 0 : hit.point.x - hit.collider.gameObject.transform.position.x;
                 differenceY = Mathf.Abs(hit.point.y - hit.collider.gameObject.transform.position.y) < step / 2 - 0.0001f ? 0 : hit.point.y - hit.collider.gameObject.transform.position.y;
                 differenceZ = Mathf.Abs(hit.point.z - hit.collider.gameObject.transform.position.z) < step / 2 - 0.0001f ? 0 : hit.point.z - hit.collider.gameObject.transform.position.z;
-
+                
+                // сопоставляем эти координаты с координатами объекта, в который попал луч
                 positionX = hit.collider.gameObject.transform.position.x + differenceX * 2;
                 positionY = hit.collider.gameObject.transform.position.y + differenceY * 2 + mouseScrollValue * step;
                 positionZ = hit.collider.gameObject.transform.position.z + differenceZ * 2;
