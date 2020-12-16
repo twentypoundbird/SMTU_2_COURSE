@@ -43,14 +43,11 @@ public class WorldLogic : MonoBehaviour
     int xCoord, yCoord, zCoord;
     int tempxCoord = 0, tempzCoord = 0;
     bool Boolfas, deleteMode;
-
     WorldLogic()
     {
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
         TypeOfObjectOnMapInt = new byte[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
-    
-
     public void IsTapped(int num)
     {
         if (newMiniCube == null)
@@ -104,18 +101,12 @@ public class WorldLogic : MonoBehaviour
                     newMiniCube.transform.parent = transform;
                     newMiniCube.AddComponent<MeshCollider>().sharedMesh = generalMesh;
 
-
-                    #region generalMesh
-
                     newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
 
                     TypeOfObjectOnMap[x, y, z] = newMiniCube;
                     TypeOfObjectOnMapInt[x, y, z] = 9;
-                    Debug.Log("M[" + x + ":" + y + ":" + z + "]" + TypeOfObjectOnMapInt[x, y, z]);
-                    #endregion
                     newMiniCube.tag = "ground";
-                    //newMiniCube.isStatic = true;
                 }
             }
         }
@@ -124,7 +115,6 @@ public class WorldLogic : MonoBehaviour
         yCoord = 0; 
         zCoord = 0;
         materialForMiniCube = sandMaterial;
-        //gameObject.AddComponent<CombineMeshes>();
     }
 
     /// <summary> Метод, отвечающий за инициализацию 
@@ -140,19 +130,10 @@ public class WorldLogic : MonoBehaviour
             {
                 if (model3D != null)
                 {
-                    //newMiniCube = new GameObject;
                     newMiniCube = new GameObject();
                     newMiniCube.transform.localScale = new Vector3(step + 2, step + 2 , step + 2);
                     newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
                     newMiniCube.AddComponent<ObjectID>();
-
-                    if (newMiniCube == model3D) Debug.Log("Всё заебись");
-                    #region generalMesh
-
-                    //newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
-
-                    #endregion
-
                     Instantiate(model3D, newMiniCube.transform);
                     if(model3D == mine)
                     {
@@ -202,8 +183,6 @@ public class WorldLogic : MonoBehaviour
                                     EndY = (byte)yCoord;
                                     EndZ = (byte)zCoord;
                                 }
-                                Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
-
                                 if (model3D == mine)
                                 {
                                     for (int i = yCoord; i>= 1; i--)
@@ -251,7 +230,6 @@ public class WorldLogic : MonoBehaviour
                                             {
                                                 break;
                                             }
-                                            
                                         }
                                         yCoord = i - 1;
                                         xCoord = tempxCoord;
@@ -267,11 +245,8 @@ public class WorldLogic : MonoBehaviour
                                         TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                         TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 8;
                                         Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
-
                                     }
-
                                 }
-
                                 newMiniCube = null;
                                 mouseScrollValue = 0;
                             }
@@ -284,8 +259,6 @@ public class WorldLogic : MonoBehaviour
                 }
             }
         }
-
-
         if (newMiniCube != null)
         {
             if (Mathf.Abs(Input.mouseScrollDelta.y) > 0)
@@ -304,9 +277,6 @@ public class WorldLogic : MonoBehaviour
                 positionY = hit.collider.gameObject.transform.position.y + differenceY * 2 + mouseScrollValue * step;
                 positionZ = hit.collider.gameObject.transform.position.z + differenceZ * 2;
 
-
-
-
                 if (positionY >= 0 && positionY / step + 0.1 < MapSizeEditor.countY)
                 {
                     yCoord = (int)(positionY / step + 0.1);
@@ -318,7 +288,6 @@ public class WorldLogic : MonoBehaviour
                     {
                         tempzCoord = (int)(positionZ / step + 0.1);
                     }
-                    //if (model3D == mine) { }
                 }
                 else
                 {
@@ -350,13 +319,9 @@ public class WorldLogic : MonoBehaviour
                     }
                 }
                 if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null) newMiniCube.transform.position = new Vector3(xCoord * step, yCoord * step, zCoord * step);
-                //Debug.Log("Cord{" + positionX + ":" + positionY + ":" + positionZ + "}");
-                //Debug.Log("RealCord{" + xCoord + ":" + yCoord + ":" + zCoord + "}");
             }
         }
     }
-
-
     /// <summary>
     /// Метод, который удаляет <see cref="UnityEngine.GameObject"/> со сцены 
     /// </summary>
@@ -382,7 +347,6 @@ public class WorldLogic : MonoBehaviour
                     {
                         for (int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >= 0; i--)
                         {
-                            //Debug.LogWarning((int)hit.collider.gameObject.transform.position.x / step);
                             if (TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)].tag == "chain")
                             {
                                 Destroy(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
@@ -396,8 +360,6 @@ public class WorldLogic : MonoBehaviour
             }
         }
     }
-
-
     void objectRot(GameObject model)
     {
         if (Input.GetButtonDown("T"))
@@ -409,7 +371,6 @@ public class WorldLogic : MonoBehaviour
             model.transform.Rotate(0, -90, 0);
         }
     }
-
     private void Update()
     {
         if (!EventSystem.current.IsPointerOverGameObject() && !deleteMode)
