@@ -20,7 +20,7 @@ public class SaveButton : MonoBehaviour
     }
     public void IsTapped()
     {
-        if(File.Exists(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile))
+        if(File.Exists(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile)) // проверяем существует ли файл
         {
             string sizeOfMas = MapSizeEditor.countX + "\n" + MapSizeEditor.countY + "\n" + MapSizeEditor.countZ +"\n"; // сохраняем размеры карты построчно
             string mass = "";
