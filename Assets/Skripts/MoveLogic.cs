@@ -8,8 +8,6 @@ public class MoveLogic : MonoBehaviour
 {
     public static GameObject deathScreen;
     public static GameObject winScreen;
-    public static AudioSource winSound;
-    public static AudioSource loseSound;
 
     //[SerializeField]
     public bool MoveStart = false;
@@ -32,8 +30,6 @@ public class MoveLogic : MonoBehaviour
         deathScreen.SetActive(false);
         winScreen = GameObject.Find("WinScreen");
         winScreen.SetActive(false);
-        winSound = GameObject.Find("WinSound").GetComponent<AudioSource>();
-        loseSound = GameObject.Find("LoseSound").GetComponent<AudioSource>();
     }
 
     public static void MoveObject(GameObject @object, string directoin)
@@ -170,13 +166,11 @@ public class MoveLogic : MonoBehaviour
         if (BoatLossORWinСheck(@object) == 1)
         {
             deathScreen.SetActive(true);
-            loseSound.Play();
             yield return DeathScreen();
         }
         if (BoatLossORWinСheck(@object) == 2)
         {
             winScreen.SetActive(true);
-            winSound.Play(); 
             yield return DeathScreen();
         }
         yield return 0;
