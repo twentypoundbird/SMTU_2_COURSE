@@ -107,7 +107,9 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
-    
+    //в данном регионе находятся методы, которые вызываются при нажатии на соответствующие кнопки из столбца команд
+    #region TapMethods 
+
     public void IsTappedForward()
     {
         forwardLabel.GetComponent<Image>().color = standartColor;
@@ -304,6 +306,9 @@ public class ControlPanel : MonoBehaviour
         equalLastInStack(isEndCondition, true);
     }
 
+    #endregion
+
+    //куротина IfCondition сложит основной логикой условного оператора if и всего, что в нем происходит на этапе КОНСТРУКТОРа
     IEnumerator IfCondition(int n)
     {
         while (!exitFromParam.Peek())
