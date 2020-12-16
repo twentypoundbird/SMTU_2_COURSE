@@ -8,47 +8,44 @@ using System;
 
 public class WorldLogic : MonoBehaviour
 {
-    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse;
+    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse; // 3d модели
 
-    private GameObject model3D;
-    private byte modelID;
-
-    private static int step = MapSizeEditor.step;
-
-    public Camera camera;
-
-    public Material generalMaterial, invisibleMaterial,
-        sandMaterial;
+    // Материалы для 3d моделей
+    public Material generalMaterial, invisibleMaterial, sandMaterial;
     public Mesh generalMesh;
-
     public static Material materialForMiniCube;
 
-    private GameObject newMiniCube;
-    private BoxCollider boxOfMinicube;
+    private GameObject model3D; // используемая в данный момент 3d модель
+    private byte modelID; // индификационный номер(далее ID) используемой 3d модели
 
-    GameObject[,,] TypeOfObjectOnMap;
-    public static byte[,,] TypeOfObjectOnMapInt;
+    private static int step = MapSizeEditor.step; // step - размер одной клетки. Пр. 1 кл = 10 у.е
 
-    private static byte MainX;
-    private static byte MainY;
-    private static byte MainZ;
+    public Camera camera; // камера на сцене, через которую смотрит игрок. Нужна для использования Raycast
 
-    private static byte EndX;
-    private static byte EndY;
-    private static byte EndZ;
+    private GameObject newMiniCube; // временный объект, созданный игроком при нажатии на экран
 
-    float mouseScrollValue;
+    GameObject[,,] TypeOfObjectOnMap; // массив с объектами для удобного удаления их с сцены
+    public static byte[,,] TypeOfObjectOnMapInt; // массив с ID объектов
 
-    private float positionX, positionY, positionZ, differenceX, differenceY, differenceZ;
+    private byte MainX,MainY,MainZ; // Координаты главной лодки
+    private byte EndX,EndY,EndZ; // Координаты конечного пункта пути
+
+    private float mouseScrollValue; // для редактирования высоты с помощью колёсика мышки
+
+    // Временные переменные, чтобы не создавать их каждый frame
+    private float positionX, positionY, positionZ;
+    private float differenceX, differenceY, differenceZ;
     int xCoord, yCoord, zCoord;
     int tempxCoord = 0, tempzCoord = 0;
+
     bool Boolfas, deleteMode;
     WorldLogic()
     {
+        // инициализируем массивы с размерами, указанными пользователем
         TypeOfObjectOnMap = new GameObject[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
         TypeOfObjectOnMapInt = new byte[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
     }
-    public void IsTapped(int num)
+    public void IsTapped(int num) // вызывается при нажатии на панель (рис.1)
     {
         if (newMiniCube == null)
         {
@@ -74,6 +71,10 @@ public class WorldLogic : MonoBehaviour
                 case 7:
                     deleteMode = true;
                     break;
+                case 9:
+                    model3D = null;
+                    deleteMode = false;
+                    break;
                 default:
                     deleteMode = false;
                     model3D = null;
@@ -90,26 +91,27 @@ public class WorldLogic : MonoBehaviour
         {
             for (int y = 0; y<1; y++)
             {
-                for (int z = 0; z < MapSizeEditor.countZ; z++)
+                for (int z = 0; z < MapSizeEditor.countZ; z++) // создаём самый нижний слой кубов, который нельзя будет удалять
                 {
                     xCoord = (int)(step * (x));
                     yCoord = (int)(step * (y));
                     zCoord = (int)(step * (z));
-                    newMiniCube = new GameObject();
-                    newMiniCube.transform.position = new Vector3(xCoord, yCoord, zCoord);
-                    newMiniCube.transform.localScale = new Vector3(step, step, step);
-                    newMiniCube.transform.parent = transform;
-                    newMiniCube.AddComponent<MeshCollider>().sharedMesh = generalMesh;
+                    newMiniCube = new GameObject(); // создаём новый объект
+                    newMiniCube.transform.position = new Vector3(xCoord, yCoord, zCoord); // устанавливаем местоположение
+                    newMiniCube.transform.localScale = new Vector3(step, step, step); // устанавливаем размер 
+                    newMiniCube.transform.parent = transform; // делаем дочерним объектом Объекта, на котором висит данный скрипт
+                    newMiniCube.AddComponent<MeshCollider>().sharedMesh = generalMesh; // создаём коллайдер, чтобы объект имел границы
 
-                    newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;
-                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
+                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;  // задаём объект как куб
+                    newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial;  // вешаем на куб материал
 
-                    TypeOfObjectOnMap[x, y, z] = newMiniCube;
-                    TypeOfObjectOnMapInt[x, y, z] = 9;
-                    newMiniCube.tag = "ground";
+                    TypeOfObjectOnMap[x, y, z] = newMiniCube; // записываем объект в массив с объектами
+                    TypeOfObjectOnMapInt[x, y, z] = 9; // записываем тип объекта для дальшейшего сохранения в файл и для других манипуляций
+                    newMiniCube.tag = "ground"; // присваиваем тег для того, чтобы в дальнейшем самый нижний слой нельзя было удалить
                 }
             }
         }
+        // обнуляем значения
         newMiniCube = null;
         xCoord = 0;
         yCoord = 0; 
@@ -124,66 +126,57 @@ public class WorldLogic : MonoBehaviour
     /// </summary>
     void SpawnerControl(GameObject model3D)
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)) // вызывается, когда игрок ставит объект с помощью ЛКМ
         {
             if (newMiniCube == null)
             {
-                if (model3D != null)
+                if (model3D != null || modelID == 9)
                 {
-                    newMiniCube = new GameObject();
-                    newMiniCube.transform.localScale = new Vector3(step + 2, step + 2 , step + 2);
-                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh;
-                    newMiniCube.AddComponent<ObjectID>();
-                    Instantiate(model3D, newMiniCube.transform);
-                    if(model3D == mine)
-                    {
-                        newMiniCube.tag = "mine";
-                    }
+                    newMiniCube = new GameObject(); // создаём новый объект
+                    newMiniCube.transform.localScale = new Vector3(step + 2, step + 2 , step + 2); // задаём размер объекта чуть больше, чем все объекты, чтобы визуально было удобнее его размещать
+                    newMiniCube.AddComponent<MeshFilter>().mesh = generalMesh; // задаём объект как куб
 
-                }
-                else
-                {
-                    Debug.Log("нет модели");
+                    if (modelID == 9) newMiniCube.AddComponent<MeshRenderer>().material = generalMaterial; // вешаем на куб материал
+                    else Instantiate(model3D, newMiniCube.transform); // загружаем модельку в объект,
+                
+                    if (model3D == mine) newMiniCube.tag = "mine";
                 }
             }
             else
             {
-                if (xCoord >= 0 && xCoord < MapSizeEditor.countX)
+                if (xCoord >= 0 && xCoord < MapSizeEditor.countX) // проверяем допустимость координат
                 {
-                    if (yCoord >= 0 && yCoord < MapSizeEditor.countY)
+                    if (yCoord >= 0 && yCoord < MapSizeEditor.countY) // проверяем допустимость координат
                     {
-                        if (zCoord >= 0 && zCoord < MapSizeEditor.countZ)
+                        if (zCoord >= 0 && zCoord < MapSizeEditor.countZ) // проверяем допустимость координат
                         {
-                            if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null)
+                            if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null) // если на данных координатах нет объекта, то размещаем его
                             {
                                 newMiniCube.transform.localScale = new Vector3(step , step , step );
                                 newMiniCube.transform.parent = transform;
                                 newMiniCube.AddComponent<BoxCollider>().center = new Vector3(0, 0, 0);
                                 TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                 TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = modelID;
+
                                 if (modelID == 1)
                                 {
-                                    if (!(MainX == 0 && MainY == 0 && MainZ == 0))
+                                    if (!(MainX == 0 && MainY == 0 && MainZ == 0)) // удаляем повторения главной лодки
                                     {
                                         Destroy(TypeOfObjectOnMap[MainX, MainY, MainZ]);
                                         TypeOfObjectOnMapInt[MainX, MainY, MainZ] = 0;
                                     }
-                                    MainX = (byte)xCoord;
-                                    MainY = (byte)yCoord;
-                                    MainZ = (byte)zCoord;
+                                    MainX = (byte)xCoord; MainY = (byte)yCoord; MainZ = (byte)zCoord;
                                 }
-                                if (modelID == 3)
+                                else if (modelID == 3)
                                 {
-                                    if (!(EndX == 0 && EndY == 0 && EndZ == 0))
+                                    if (!(EndX == 0 && EndY == 0 && EndZ == 0)) // удаляем повторения маячка с конечной точкой маршрута
                                     {
                                         Destroy(TypeOfObjectOnMap[EndX, EndY, EndZ]);
                                         TypeOfObjectOnMapInt[EndX, EndY, EndZ] = 0;
                                     }
-                                    EndX = (byte)xCoord;
-                                    EndY = (byte)yCoord;
-                                    EndZ = (byte)zCoord;
+                                    EndX = (byte)xCoord; EndY = (byte)yCoord; EndZ = (byte)zCoord;
                                 }
-                                if (model3D == mine)
+                                if (model3D == mine) // если объект Мина - то размещаем под ним цепь, если это возможно, если нет, сразу крепление к поверхности
                                 {
                                     for (int i = yCoord; i>= 1; i--)
                                     {
@@ -191,11 +184,9 @@ public class WorldLogic : MonoBehaviour
                                         {
                                             if (TypeOfObjectOnMap[xCoord, i - 1, zCoord].tag == "mine")
                                             {
-                                                Debug.LogWarning("Нажал2");
                                                 Destroy(TypeOfObjectOnMap[xCoord, i - 1, zCoord]);
                                                 TypeOfObjectOnMap[xCoord, i - 1, zCoord] = null;
                                                 TypeOfObjectOnMapInt[xCoord, i - 1, zCoord] = 0;
-                                                Debug.Log("M[" + xCoord + ":" + (i-1) + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, i-1, zCoord]);
                                             }
                                         }
                                         if (TypeOfObjectOnMap[xCoord, i - 1, zCoord] != null)
@@ -244,15 +235,10 @@ public class WorldLogic : MonoBehaviour
                                         newMiniCube.tag = "chain";
                                         TypeOfObjectOnMap[xCoord, yCoord, zCoord] = newMiniCube;
                                         TypeOfObjectOnMapInt[xCoord, yCoord, zCoord] = 8;
-                                        Debug.Log("M[" + xCoord + ":" + yCoord + ":" + zCoord + "]" + TypeOfObjectOnMapInt[xCoord, yCoord, zCoord]);
                                     }
                                 }
                                 newMiniCube = null;
                                 mouseScrollValue = 0;
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Место занято другим объектом!");
                             }
                         }
                     }
@@ -261,40 +247,39 @@ public class WorldLogic : MonoBehaviour
         }
         if (newMiniCube != null)
         {
-            if (Mathf.Abs(Input.mouseScrollDelta.y) > 0)
-            {
-                mouseScrollValue += Input.mouseScrollDelta.y;
-            }
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            if (Mathf.Abs(Input.mouseScrollDelta.y) > 0) mouseScrollValue += Input.mouseScrollDelta.y; // смена высоты колёсиком мышки
+            
+            Ray ray = camera.ScreenPointToRay(Input.mousePosition); // используем Raycast для определения местоположения мышки на 3d пространстве
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 1000 * step))
             {
+                // получаем координаты, куда попал луч и переводим их в удобный для нас вид
                 differenceX = Mathf.Abs(hit.point.x - hit.collider.gameObject.transform.position.x) < step / 2 - 0.0001f ? 0 : hit.point.x - hit.collider.gameObject.transform.position.x;
                 differenceY = Mathf.Abs(hit.point.y - hit.collider.gameObject.transform.position.y) < step / 2 - 0.0001f ? 0 : hit.point.y - hit.collider.gameObject.transform.position.y;
                 differenceZ = Mathf.Abs(hit.point.z - hit.collider.gameObject.transform.position.z) < step / 2 - 0.0001f ? 0 : hit.point.z - hit.collider.gameObject.transform.position.z;
-
+                
+                // сопоставляем эти координаты с координатами объекта, в который попал луч
                 positionX = hit.collider.gameObject.transform.position.x + differenceX * 2;
                 positionY = hit.collider.gameObject.transform.position.y + differenceY * 2 + mouseScrollValue * step;
                 positionZ = hit.collider.gameObject.transform.position.z + differenceZ * 2;
-
-                if (positionY >= 0 && positionY / step + 0.1 < MapSizeEditor.countY)
+                
+                
+                if (positionY >= 0 && positionY / step + 0.1 < MapSizeEditor.countY) // Проверяем, выходит ли Y (в unity это высота) за установленные пользователем границы
                 {
                     yCoord = (int)(positionY / step + 0.1);
-                    if (positionX >= 0 && positionX / step + 0.1 < MapSizeEditor.countX)
+                    if (positionX >= 0 && positionX / step + 0.1 < MapSizeEditor.countX) // Проверяем, выходит ли X за установленные пользователем границы
                     {
                         tempxCoord = (int)(positionX / step + 0.1);
                     }
-                    if (positionZ >= 0 && positionZ/ step + 0.1 < MapSizeEditor.countZ)
+                    if (positionZ >= 0 && positionZ/ step + 0.1 < MapSizeEditor.countZ) // Проверяем, выходит ли Z за установленные пользователем границы
                     {
                         tempzCoord = (int)(positionZ / step + 0.1);
                     }
                 }
-                else
-                {
-                    mouseScrollValue = 0;
-                }
-                Boolfas = false;
-                for (int i = yCoord; i < MapSizeEditor.countY; i++)
+                else mouseScrollValue = 0;
+
+                Boolfas = false; // Найдена ли свободная клетка
+                for (int i = yCoord; i < MapSizeEditor.countY; i++) // если клетка по высоте занята, то смотрим свободное место сверху
                 {
                     if (TypeOfObjectOnMap[tempxCoord, i, tempzCoord] == null)
                     {
@@ -305,9 +290,9 @@ public class WorldLogic : MonoBehaviour
                         break;
                     }
                 }
-                if(!Boolfas)
+                if(!Boolfas) // Если свободного места сверху нет, то ищем снизу
                 { 
-                    for (int i = MapSizeEditor.countY-1; i >= 0; i--)
+                    for (int i = MapSizeEditor.countY-1; i >= 0; i--) 
                     {
                         if (TypeOfObjectOnMap[tempxCoord, i, tempzCoord] == null)
                         {
@@ -318,7 +303,11 @@ public class WorldLogic : MonoBehaviour
                         }
                     }
                 }
-                if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null) newMiniCube.transform.position = new Vector3(xCoord * step, yCoord * step, zCoord * step);
+                if (TypeOfObjectOnMap[xCoord, yCoord, zCoord] == null)
+                {
+                    // если место не занято, то перемещаем редактируемый объект туда
+                    newMiniCube.transform.position = new Vector3(xCoord * step, yCoord * step, zCoord * step);
+                }
             }
         }
     }
@@ -329,21 +318,20 @@ public class WorldLogic : MonoBehaviour
     /// </remarks>
     void DeleteControl()
     {
-        if (Input.GetMouseButtonDown(0) && deleteMode)
+        if (Input.GetMouseButtonDown(0) && deleteMode) // Пользователь нажал ЛКМ при Delete режиме
         {
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = camera.ScreenPointToRay(Input.mousePosition); // используем Raycast для определения местоположения мышки на 3d пространстве
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, 100 * step))
             {
-                if (hit.collider.gameObject.tag != "ground")
+                if (hit.collider.gameObject.tag != "ground") // запрещаем удаление самого нижнего слоя
                 {
-                    if (hit.collider.gameObject.tag != "chain")
+                    if (hit.collider.gameObject.tag != "chain") // запрещаем удаление цепи - чтобы пользователь случайно не удалил её
                     {
                         Destroy(hit.collider.gameObject);
                         TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), (int)(hit.collider.gameObject.transform.position.y / step + 0.1), (int)(hit.collider.gameObject.transform.position.z / step + 0.1)] = 0;
-                        Debug.Log("M[" + (int)(hit.collider.gameObject.transform.position.x / step + 0.1) + ":" + (int)(hit.collider.gameObject.transform.position.y / step + 0.1) + ":" + (int)(hit.collider.gameObject.transform.position.z / step + 0.1) + "]" + TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), (int)(hit.collider.gameObject.transform.position.y / step + 0.1), (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
                     }
-                    if (hit.collider.gameObject.tag == "mine")
+                    if (hit.collider.gameObject.tag == "mine") // удаляем цепь под миной, если пользователь всё таки хотел удалить мину
                     {
                         for (int i = (int)(hit.collider.gameObject.transform.position.y / step + 0.1); i >= 0; i--)
                         {
@@ -351,7 +339,6 @@ public class WorldLogic : MonoBehaviour
                             {
                                 Destroy(TypeOfObjectOnMap[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
                                 TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)] = 0;
-                                Debug.Log("M[" + (int)(hit.collider.gameObject.transform.position.x / step + 0.1) + ":" + i + ":" + (int)(hit.collider.gameObject.transform.position.z / step + 0.1) + "]" + TypeOfObjectOnMapInt[(int)(hit.collider.gameObject.transform.position.x / step + 0.1), i, (int)(hit.collider.gameObject.transform.position.z / step + 0.1)]);
                             }
                         }
 
@@ -366,7 +353,7 @@ public class WorldLogic : MonoBehaviour
         {
             model.transform.Rotate(0,90,0);
         }
-        if (Input.GetButtonDown("R"))
+        else if (Input.GetButtonDown("R"))
         {
             model.transform.Rotate(0, -90, 0);
         }
@@ -377,15 +364,13 @@ public class WorldLogic : MonoBehaviour
         {
             SpawnerControl(model3D);
         }
-        if (!EventSystem.current.IsPointerOverGameObject())
+        else if (!EventSystem.current.IsPointerOverGameObject())
         {
             DeleteControl();
         }
-        if(model3D != null && newMiniCube != null && model3D != mine)
+        else if(model3D != null && newMiniCube != null && model3D != mine)
         {
             objectRot(newMiniCube);
-
         }
-
     }
 }

@@ -5,24 +5,24 @@ using System.IO;
 
 public class SaveButton : MonoBehaviour
 {
-    string nameOfSaveFile = "/test.txt",
-        nameDirectiry = "/testDir";
+    string nameOfSaveFile = "/save1.txt", // имя файла
+        nameDirectiry = "/saves"; // имя папки для этого файла
     private void Start()
     {
-        if (!Directory.Exists(Directory.GetCurrentDirectory() + nameDirectiry))
+        if (!Directory.Exists(Directory.GetCurrentDirectory() + nameDirectiry)) // проверяем существует ли папка
         {
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + nameDirectiry);
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() + nameDirectiry); // создаём папку
         }
-        if (!File.Exists(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile))
+        if (!File.Exists(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile)) // проверяем существует ли файл
         {
-            File.Create(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile);
+            File.Create(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile); // создаём файл
         }
     }
     public void IsTapped()
     {
-        if(File.Exists(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile))
+        if(File.Exists(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile)) // проверяем существует ли файл
         {
-            string sizeOfMas = MapSizeEditor.countX + "\n" + MapSizeEditor.countY + "\n" + MapSizeEditor.countZ +"\n";
+            string sizeOfMas = MapSizeEditor.countX + "\n" + MapSizeEditor.countY + "\n" + MapSizeEditor.countZ +"\n"; // сохраняем размеры карты построчно
             string mass = "";
             for (int x = 0; x<MapSizeEditor.countX; x++)
             {
@@ -30,14 +30,13 @@ public class SaveButton : MonoBehaviour
                 {
                     for (int z = 0; z < MapSizeEditor.countZ; z++)
                     {
-                        mass += WorldLogic.TypeOfObjectOnMapInt[x, y, z].ToString();
+                        mass += WorldLogic.TypeOfObjectOnMapInt[x, y, z].ToString(); // сохраняем типы всех объектов подряд
                     }
 
                 }
 
             }
-            File.WriteAllText(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile, sizeOfMas + mass);
-           // File.AppendAllText(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile, "123");
+            File.WriteAllText(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile, sizeOfMas + mass); // записываем string в файл
         }
     }
 }

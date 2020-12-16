@@ -9,50 +9,47 @@ using System;
 
 public class GameWorldLogic : MonoBehaviour
 {
-    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse;
+    public GameObject submarine, mine, chainLink, fixOnTheGround, lighthouse; // 3d модели
 
-    private static readonly int step = MapSizeEditor.step;
+    private static int step = MapSizeEditor.step; // step - размер одной клетки. Пр. 1 кл = 10 у.е
 
-    public Camera camera;
+    public Camera camera; // камера на сцене, через которую смотрит игрок. Нужна для использования Raycast
 
-    public Material generalMaterial, invisibleMaterial,
-        sandMaterial;
+    // Материалы для 3d моделей
+    public Material generalMaterial, invisibleMaterial,sandMaterial;
     public Mesh generalMesh;
-
     public static Material materialForMiniCube;
 
-    private GameObject newMiniCube;
-    private GameObject landscape;
+    private GameObject newMiniCube; // временный объект для размещения его на карте
+    private GameObject landscape; // главный объект для иерархии ландшафта
 
-    public static byte[,,] TypeOfObjectOnMapInt;
-
+    public static byte[,,] TypeOfObjectOnMapInt; // массив с ID объектов
 
     private void Start()
     {
-
-        landscape = new GameObject();
+        // загружаем игровое пространство
+        landscape = new GameObject(); // создаём родительский объект, куда будем записывать все объекты, типа 9(поверхность куб)
         landscape.name = "Landscape";
         landscape.transform.parent = transform;
-        string nameOfSaveFile = "/test.txt", nameDirectiry = "/testDir";
+        string nameOfSaveFile = "/save1.txt", nameDirectiry = "/saves";
         string[] readedLines = File.ReadAllLines(Directory.GetCurrentDirectory() + nameDirectiry + nameOfSaveFile); // чтение файла
-        string sepLine = readedLines[0];
-        if (byte.TryParse(sepLine, out byte outValue)) MapSizeEditor.countX = outValue;
-        sepLine = readedLines[1];
-        if (byte.TryParse(sepLine, out outValue)) MapSizeEditor.countY = outValue;
-        sepLine = readedLines[2];
-        if (byte.TryParse(sepLine, out outValue)) MapSizeEditor.countZ = outValue;
-        sepLine = readedLines[3];
+        string sepLine = readedLines[0]; // читаем первую линию из файла
+        if (byte.TryParse(sepLine, out byte outValue)) MapSizeEditor.countX = outValue; // она отвечает за размер карты по X
+        sepLine = readedLines[1]; // читаем вторую линию из файла
+        if (byte.TryParse(sepLine, out outValue)) MapSizeEditor.countY = outValue; // она отвечает за размер карты по Y
+        sepLine = readedLines[2]; // читаем третью линию из файла
+        if (byte.TryParse(sepLine, out outValue)) MapSizeEditor.countZ = outValue; // она отвечает за размер карты по Z
+        sepLine = readedLines[3]; // читаем четвёртую линию из файла, которая хранит типы объектов расположенных подряд
         int count = 0;
-        TypeOfObjectOnMapInt = new byte[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ];
+        TypeOfObjectOnMapInt = new byte[MapSizeEditor.countX, MapSizeEditor.countY, MapSizeEditor.countZ]; // инициализируем массив с размерами, указанными в файле
         for (byte x = 0; x < MapSizeEditor.countX; x++)
         {
             for (byte y = 0; y < MapSizeEditor.countY; y++)
             {
                 for (byte z = 0; z < MapSizeEditor.countZ; z++)
                 {
-                    if (byte.TryParse(sepLine[count++].ToString(), out outValue))
+                    if (byte.TryParse(sepLine[count++].ToString(), out outValue)) // конвертируем символ в число
                     {
-                        //Debug.Log("M[" + x + ":" + y + ":" + z + "] = " + outValue);
                         TypeOfObjectOnMapInt[x, y, z] = outValue;
                         CreateObjectType(x, y, z, outValue);
                     }
@@ -60,7 +57,6 @@ public class GameWorldLogic : MonoBehaviour
             }
         }
     }
-
     void CreateObjectType(byte x, byte y, byte z, byte type)
     {
         if(type != 0)
@@ -77,12 +73,11 @@ public class GameWorldLogic : MonoBehaviour
                     Instantiate(submarine, newMiniCube.transform);
                     newMiniCube.AddComponent<MoveLogic>();
                     newMiniCube.name = "MainPodLODKA";
-                    Debug.LogWarning(x + " " + y + " " + z);
                     CommandReader.submarine = newMiniCube;
                     break;
                 case 2:
                     Instantiate(mine, newMiniCube.transform);
-                    if (TypeOfObjectOnMapInt[x, y - 1, z] != 8)
+                    if (TypeOfObjectOnMapInt[x, y - 1, z] != 8) // если под бомбой снизу нет цепи, то создаём объект крепёж
                     {
                         Instantiate(fixOnTheGround, newMiniCube.transform);
                     }
@@ -96,7 +91,7 @@ public class GameWorldLogic : MonoBehaviour
                     Instantiate(chainLink, newMiniCube.transform);
                     if(y!=0)
                     {
-                        if (TypeOfObjectOnMapInt[x, y - 1, z] != 8)
+                        if (TypeOfObjectOnMapInt[x, y - 1, z] != 8) // если под цепью снизу нет цепи, то создаём объект крепёж
                         {
                             Instantiate(fixOnTheGround, newMiniCube.transform);
                         }
