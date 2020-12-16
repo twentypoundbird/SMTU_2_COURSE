@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class MoveLogic : MonoBehaviour
 {
+    public static GameObject deathScreen;
+
     //[SerializeField]
     public bool MoveStart = false;
     public static int speed = 100;
@@ -17,6 +20,14 @@ public class MoveLogic : MonoBehaviour
 
     public string DELETE_text;
     public bool DELETE_InsertLogicMove = false;
+
+
+
+    private void Start()
+    {
+        deathScreen = GameObject.Find("DeathScreen");
+        deathScreen.SetActive(false);
+    }
 
     public static void MoveObject(GameObject @object, string directoin)
     {
@@ -53,7 +64,7 @@ public class MoveLogic : MonoBehaviour
     /// </summary>
     /// <param name="object"></param>
     /// <returns>0 - ничего / 1 - проигрыш / 2 - выигрыш</returns>
-    private static int BoatLossORWinСheck(GameObject @object)
+    public static int BoatLossORWinСheck(GameObject @object)
     {
         int cX, cY, cZ;
         int x = cX = (int)(@object.transform.position.x / MapSizeEditor.step);
@@ -149,7 +160,27 @@ public class MoveLogic : MonoBehaviour
                 
                 break;
         }
-        if (BoatLossСheck(@object)) Debug.LogError("Лодка проигралась");
+        if (BoatLossORWinСheck(@object) == 1)
+        {
+            deathScreen.SetActive(true);
+            yield return DeathScreen();
+        }
         yield return 0;
+    }
+
+    public static IEnumerator DeathScreen()
+    {
+        bool tap = false;
+        while (!tap)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                tap = true;
+                Debug.LogWarning(tap);
+            }
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitUntil(() => tap);
+        SceneManager.LoadScene("GameScene");
     }
 }
