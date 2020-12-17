@@ -9,7 +9,7 @@ public class CommandReader : MonoBehaviour
 
     public static GameObject submarine;
 
-    private bool isCondition;
+    private bool isCondition = false;
 
     Stack<bool> isConditionsDone = new Stack<bool>();
     void StackRerfreasher<T>(Stack<T> stack, T value)
@@ -104,16 +104,13 @@ public class CommandReader : MonoBehaviour
                     if (isConditionsDone.Peek())
                     {
                         StackRerfreasher<bool>(isConditionsDone, Check(content.transform.GetChild(step + 1).GetComponentInChildren<Text>().text, content.transform.GetChild(step).GetComponentInChildren<Text>().text));
-                        Debug.LogWarning(isConditionsDone.Peek());
                     }
                 }
             }
-            if (isCondition && content.transform.GetChild(step).GetComponentInChildren<Text>().text == "End")
+            if (content.transform.GetChild(step).GetComponentInChildren<Text>().text == "End")
             {
                 isConditionsDone.Pop();
             }
-
-
             step++;
         }
         yield return 0;
