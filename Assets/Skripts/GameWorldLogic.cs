@@ -1,11 +1,5 @@
-﻿using System.Collections;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System.Reflection;
-using System;
 
 public class GameWorldLogic : MonoBehaviour
 {
@@ -51,13 +45,18 @@ public class GameWorldLogic : MonoBehaviour
                     if (byte.TryParse(sepLine[count++].ToString(), out outValue)) // конвертируем символ в число
                     {
                         TypeOfObjectOnMapInt[x, y, z] = outValue;
-                        CreateObjectType(x, y, z, outValue);
+                        if (outValue != 1) CreateObjectType(x, y, z, outValue);
+                        else
+                        {
+                            byte.TryParse(sepLine[count++].ToString(), out byte outValue2);
+                            CreateObjectType(x, y, z, outValue,outValue2);
+                        }
                     }
                 }
             }
         }
     }
-    void CreateObjectType(byte x, byte y, byte z, byte type)
+    void CreateObjectType(byte x, byte y, byte z, byte type, byte rotation = 0)
     {
         if(type != 0)
         { 
@@ -74,6 +73,10 @@ public class GameWorldLogic : MonoBehaviour
                     newMiniCube.AddComponent<MoveLogic>();
                     newMiniCube.name = "MainPodLODKA";
                     CommandReader.submarine = newMiniCube;
+                    if(rotation != 0)
+                    {
+                        newMiniCube.transform.Rotate(0, 90*(rotation), 0);
+                    }
                     break;
                 case 2:
                     Instantiate(mine, newMiniCube.transform);
