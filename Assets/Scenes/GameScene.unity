@@ -1131,7 +1131,7 @@ MonoBehaviour:
   fixOnTheGround: {fileID: 919132149155446097, guid: 8ec2405fa12c2a64f8b527f175a4a925, type: 3}
   lighthouse: {fileID: 919132149155446097, guid: d1d64cce07b8d434986e8a11b9eb1986, type: 3}
   camera: {fileID: 963194227}
-  generalMaterial: {fileID: 4874126678125670354, guid: 61d6c29b093ab424e8d6b9d63f9ef3a9, type: 3}
+  generalMaterial: {fileID: 2100000, guid: 520d4eafe99ad0a408560926ca56d78e, type: 2}
   invisibleMaterial: {fileID: 10650, guid: 0000000000000000f000000000000000, type: 0}
   sandMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   generalMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}

@@ -23,6 +23,7 @@ public class WorldLogic : MonoBehaviour
     public static byte[,,] TypeOfObjectOnMapInt; // массив с ID объектов
 
     private byte MainX,MainY,MainZ; // Координаты главной лодки
+    public static byte rotation;
     private byte EndX,EndY,EndZ; // Координаты конечного пункта пути
 
     private float mouseScrollValue; // для редактирования высоты с помощью колёсика мышки
@@ -161,6 +162,7 @@ public class WorldLogic : MonoBehaviour
                                         TypeOfObjectOnMapInt[MainX, MainY, MainZ] = 0;
                                     }
                                     MainX = (byte)xCoord; MainY = (byte)yCoord; MainZ = (byte)zCoord;
+                                    rotation = (byte)((newMiniCube.transform.localEulerAngles.y)/90); // сохраняем поворот лодки (от 0 до 3)
                                 }
                                 else if (modelID == 3)
                                 {
@@ -359,11 +361,11 @@ public class WorldLogic : MonoBehaviour
         {
             SpawnerControl(model3D);
         }
-        else if (!EventSystem.current.IsPointerOverGameObject())
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
             DeleteControl();
         }
-        else if(model3D != null && newMiniCube != null && model3D != mine)
+        if(model3D != null && newMiniCube != null && model3D != mine)
         {
             objectRot(newMiniCube);
         }
